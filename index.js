@@ -78,7 +78,9 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
     console.log(error.response?.data || error.message);
 
     bot.sendMessage(chatId,
-    '❌ AI request failed.');
+`❌ AI Error:
+
+${error.response?.data?.error?.message || error.message}`);
 
   }
 
