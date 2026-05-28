@@ -152,4 +152,31 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
         'Content-Type': 'application/json'
       },
       data: {
-        model: 'llama-3.
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      }
+    });
+
+    const reply = response.data.choices[0].message.content;
+
+    bot.sendMessage(chatId, reply);
+
+  } catch (error) {
+
+    console.log(error.response?.data || error.message);
+
+    bot.sendMessage(chatId,
+`❌ AI Error:
+
+${JSON.stringify(error.response?.data || error.message, null, 2)}`);
+
+  }
+
+});
+
+console.log('Lucid XMD Bot Running...');
