@@ -329,8 +329,10 @@ ${url}`);
 });
 // ================= FUN COMMANDS =================
 
-// Joke Command
-bot.command("joke", async (ctx) => {
+// Joke
+bot.onText(/\/joke/, async (msg) => {
+  const chatId = msg.chat.id;
+
   const jokes = [
     "Why do programmers prefer dark mode? Because light attracts bugs 😅",
     "Why did the bot go broke? Because it used too many APIs 😂",
@@ -340,11 +342,13 @@ bot.command("joke", async (ctx) => {
 
   const random = jokes[Math.floor(Math.random() * jokes.length)];
 
-  ctx.reply(`😂 Joke:\n\n${random}`);
+  bot.sendMessage(chatId, `😂 Joke:\n\n${random}`);
 });
 
-// Quote Command
-bot.command("quote", async (ctx) => {
+// Quote
+bot.onText(/\/quote/, async (msg) => {
+  const chatId = msg.chat.id;
+
   const quotes = [
     "Success starts with consistency.",
     "Dream big. Start small. Act now.",
@@ -355,11 +359,13 @@ bot.command("quote", async (ctx) => {
 
   const random = quotes[Math.floor(Math.random() * quotes.length)];
 
-  ctx.reply(`✨ Quote:\n\n"${random}"`);
+  bot.sendMessage(chatId, `✨ Quote:\n\n"${random}"`);
 });
 
-// Fact Command
-bot.command("fact", async (ctx) => {
+// Fact
+bot.onText(/\/fact/, async (msg) => {
+  const chatId = msg.chat.id;
+
   const facts = [
     "🐙 Octopuses have 3 hearts.",
     "⚡ Lightning is hotter than the sun.",
@@ -370,11 +376,13 @@ bot.command("fact", async (ctx) => {
 
   const random = facts[Math.floor(Math.random() * facts.length)];
 
-  ctx.reply(`📚 Random Fact:\n\n${random}`);
+  bot.sendMessage(chatId, `📚 Random Fact:\n\n${random}`);
 });
 
-// Truth Command
-bot.command("truth", async (ctx) => {
+// Truth
+bot.onText(/\/truth/, async (msg) => {
+  const chatId = msg.chat.id;
+
   const truths = [
     "What is your biggest fear?",
     "Who was your first crush?",
@@ -385,11 +393,13 @@ bot.command("truth", async (ctx) => {
 
   const random = truths[Math.floor(Math.random() * truths.length)];
 
-  ctx.reply(`🤫 Truth Question:\n\n${random}`);
+  bot.sendMessage(chatId, `🤫 Truth Question:\n\n${random}`);
 });
 
-// Dare Command
-bot.command("dare", async (ctx) => {
+// Dare
+bot.onText(/\/dare/, async (msg) => {
+  const chatId = msg.chat.id;
+
   const dares = [
     "Send a funny selfie 😂",
     "Sing your favorite song 🎤",
@@ -400,15 +410,18 @@ bot.command("dare", async (ctx) => {
 
   const random = dares[Math.floor(Math.random() * dares.length)];
 
-  ctx.reply(`😈 Dare Challenge:\n\n${random}`);
+  bot.sendMessage(chatId, `😈 Dare Challenge:\n\n${random}`);
 });
 
-// Ship Command
-bot.command("ship", async (ctx) => {
-  const text = ctx.message.text.split(" ").slice(1).join(" ");
+// Ship
+bot.onText(/\/ship (.+)/, async (msg, match) => {
+  const chatId = msg.chat.id;
+
+  const text = match[1];
 
   if (!text.includes("&")) {
-    return ctx.reply("❌ Use format:\n/ship name1 & name2");
+    return bot.sendMessage(chatId,
+      "❌ Use format:\n/ship name1 & name2");
   }
 
   const names = text.split("&");
@@ -424,13 +437,16 @@ bot.command("ship", async (ctx) => {
   if (percentage > 75) result = "💍 Perfect match";
   if (percentage > 90) result = "🔥 Soulmates";
 
-  ctx.reply(
+  bot.sendMessage(
+    chatId,
     `💘 Love Calculator\n\n${name1} ❤️ ${name2}\n\nCompatibility: ${percentage}%\n${result}`
   );
 });
 
-// Meme Command
-bot.command("meme", async (ctx) => {
+// Meme
+bot.onText(/\/meme/, async (msg) => {
+  const chatId = msg.chat.id;
+
   const memes = [
     "https://i.imgflip.com/30b1gx.jpg",
     "https://i.imgflip.com/1bij.jpg",
@@ -440,7 +456,7 @@ bot.command("meme", async (ctx) => {
 
   const random = memes[Math.floor(Math.random() * memes.length)];
 
-  ctx.replyWithPhoto(random, {
+  bot.sendPhoto(chatId, random, {
     caption: "😂 Random Meme"
   });
 });
