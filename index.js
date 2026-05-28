@@ -69,8 +69,7 @@ bot.on('callback_query', async (query) => {
 `🤖 AI COMMANDS
 
 /ai hello
-/ai write a poem
-/ai explain coding`);
+/ai write a poem`);
 
   }
 
@@ -79,8 +78,7 @@ bot.on('callback_query', async (query) => {
     bot.sendMessage(chatId,
 `🎵 MUSIC COMMANDS
 
-/ytmp3 believer
-/play faded`);
+/ytmp3 believer`);
 
   }
 
@@ -89,9 +87,8 @@ bot.on('callback_query', async (query) => {
     bot.sendMessage(chatId,
 `📥 DOWNLOADER COMMANDS
 
-/tiktok
-/facebook
-/instagram`);
+/tiktok link
+/instagram link`);
 
   }
 
@@ -170,9 +167,7 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
     console.log(error.response?.data || error.message);
 
     bot.sendMessage(chatId,
-`❌ AI Error:
-
-${JSON.stringify(error.response?.data || error.message, null, 2)}`);
+'❌ AI request failed.');
 
   }
 
@@ -200,13 +195,7 @@ bot.onText(/\/ytmp3 (.+)/, async (msg, match) => {
 
 ${video.title}
 
-📥 Sending download link...`);
-
-    bot.sendMessage(chatId,
-`🎶 ${video.title}
-
-🔗 YouTube Link:
-${video.url}`);
+🔗 ${video.url}`);
 
   } catch (error) {
 
@@ -216,6 +205,36 @@ ${video.url}`);
 '❌ Failed to fetch song.');
 
   }
+
+});
+
+bot.onText(/\/tiktok (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const link = match[1];
+
+  bot.sendMessage(chatId,
+`🎬 TikTok Downloader
+
+🔗 Your link:
+${link}
+
+⚠️ Full downloader API coming soon 😎`);
+
+});
+
+bot.onText(/\/instagram (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const link = match[1];
+
+  bot.sendMessage(chatId,
+`📸 Instagram Downloader
+
+🔗 Your link:
+${link}
+
+⚠️ Full downloader API coming soon 😎`);
 
 });
 
