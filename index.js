@@ -17,7 +17,7 @@ bot.on('polling_error', (error) => {
 
 
 
-// START COMMAND
+// START
 
 bot.onText(/\/start/, (msg) => {
 
@@ -33,118 +33,31 @@ Use /menu to explore commands.`);
 
 
 
-// MENU COMMAND
+// MENU
 
 bot.onText(/\/menu/, (msg) => {
 
-  const chatId = msg.chat.id;
-
-  bot.sendMessage(chatId,
+  bot.sendMessage(msg.chat.id,
 `╭━━━〔 LUCID XMD 〕━━⬣
 ┃ 🤖 AI Powered Bot
 ┃ ⚡ Status: Online
 ┃ 👨‍💻 Developer: Lucid
 ╰━━━━━━━━━━━━━━⬣
 
-Choose an option below 👇`,
-{
-  reply_markup: {
-    inline_keyboard: [
+🔥 AVAILABLE COMMANDS
 
-      [
-        { text: '🤖 AI Chat', callback_data: 'ai' },
-        { text: '🎵 Music', callback_data: 'music' }
-      ],
+🤖 /ai hello
+🎵 /ytmp3 believer
+🎬 /tiktok link
+📸 /instagram link
 
-      [
-        { text: '🎬 TikTok', callback_data: 'tiktok' },
-        { text: '⚙️ Tools', callback_data: 'tools' }
-      ],
-
-      [
-        { text: '👑 Owner', callback_data: 'owner' },
-        { text: '❓ Help', callback_data: 'help' }
-      ]
-
-    ]
-  }
-});
+Use commands directly 😎`);
 
 });
 
 
 
-// BUTTON RESPONSES
-
-bot.on('callback_query', async (query) => {
-
-  const chatId = query.message.chat.id;
-  const data = query.data;
-
-  if (data === 'ai') {
-
-    bot.sendMessage(chatId,
-`🤖 AI COMMANDS
-
-/ai hello
-/ai write a poem
-/ai explain coding`);
-
-  }
-
-  else if (data === 'music') {
-
-    bot.sendMessage(chatId,
-`🎵 MUSIC COMMANDS
-
-/ytmp3 believer`);
-
-  }
-
-  else if (data === 'tiktok') {
-
-    bot.sendMessage(chatId,
-`🎬 TIKTOK DOWNLOADER
-
-Usage:
-/tiktok TikTokLink`);
-
-  }
-
-  else if (data === 'tools') {
-
-    bot.sendMessage(chatId,
-`⚙️ UTILITIES
-
-/menu
-/help`);
-
-  }
-
-  else if (data === 'owner') {
-
-    bot.sendMessage(chatId,
-`👑 OWNER INFO
-
-Developer: Lucid Tech Solutions`);
-
-  }
-
-  else if (data === 'help') {
-
-    bot.sendMessage(chatId,
-`❓ HELP MENU
-
-Use:
-/menu`);
-
-  }
-
-});
-
-
-
-// HELP COMMAND
+// HELP
 
 bot.onText(/\/help/, (msg) => {
 
@@ -154,7 +67,8 @@ bot.onText(/\/help/, (msg) => {
 /menu - Open menu
 /ai - Chat with AI
 /ytmp3 - Search songs
-/tiktok - Download TikTok`);
+/tiktok - Download TikTok
+/instagram - Download Instagram`);
 
 });
 
@@ -195,7 +109,7 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
 
   } catch (error) {
 
-    console.log(error.response?.data || error.message);
+    console.log(error);
 
     bot.sendMessage(chatId,
 '❌ AI request failed.');
@@ -213,7 +127,8 @@ bot.onText(/\/ytmp3 (.+)/, async (msg, match) => {
   const chatId = msg.chat.id;
   const query = match[1];
 
-  bot.sendMessage(chatId, '🔍 Searching song...');
+  bot.sendMessage(chatId,
+'🔍 Searching song...');
 
   try {
 
@@ -231,11 +146,9 @@ bot.onText(/\/ytmp3 (.+)/, async (msg, match) => {
     bot.sendMessage(chatId,
 `🎵 Found Song
 
-📌 Title:
-${video.title}
+📌 ${video.title}
 
-🔗 Link:
-${video.url}`);
+🔗 ${video.url}`);
 
   } catch (error) {
 
@@ -289,12 +202,53 @@ bot.onText(/\/tiktok (.+)/, async (msg, match) => {
 
   } catch (error) {
 
+    console.log(error);
+
+    bot.sendMessage(chatId,
+'❌ TikTok download failed.');
+
+  }
+
+});
+
+
+
+// INSTAGRAM DOWNLOADER
+
+bot.onText(/\/instagram (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const url = match[1];
+
+  bot.sendMessage(chatId,
+'📸 Downloading Instagram media...');
+
+  try {
+
+    const apiUrl =
+`https://api.neoxr.eu/api/ig?url=${encodeURIComponent(url)}&apikey=yntkts`;
+
+    const response = await axios.get(apiUrl);
+
+    const media = response.data.data[0].url;
+
+    if (!media) {
+
+      return bot.sendMessage(chatId,
+      '❌ Failed to fetch Instagram media.');
+
+    }
+
+    await bot.sendVideo(chatId, media, {
+      caption: '✅ Instagram media downloaded'
+    });
+
+  } catch (error) {
+
     console.log(error.response?.data || error.message);
 
     bot.sendMessage(chatId,
-`❌ TikTok download failed.
-
-Try another TikTok link.`);
+'❌ Instagram download failed.');
 
   }
 
