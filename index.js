@@ -327,3 +327,120 @@ bot.onText(/\/instagram (.+)/, async (msg, match) => {
 ${url}`);
 
 });
+// ================= FUN COMMANDS =================
+
+// Joke Command
+bot.command("joke", async (ctx) => {
+  const jokes = [
+    "Why do programmers prefer dark mode? Because light attracts bugs 😅",
+    "Why did the bot go broke? Because it used too many APIs 😂",
+    "Why was JavaScript sad? Because it didn’t Node how to Express itself 😭",
+    "Why did the developer sleep well? Because they fixed all bugs 😎"
+  ];
+
+  const random = jokes[Math.floor(Math.random() * jokes.length)];
+
+  ctx.reply(`😂 Joke:\n\n${random}`);
+});
+
+// Quote Command
+bot.command("quote", async (ctx) => {
+  const quotes = [
+    "Success starts with consistency.",
+    "Dream big. Start small. Act now.",
+    "Discipline beats motivation.",
+    "Every expert was once a beginner.",
+    "Your future is created by what you do today."
+  ];
+
+  const random = quotes[Math.floor(Math.random() * quotes.length)];
+
+  ctx.reply(`✨ Quote:\n\n"${random}"`);
+});
+
+// Fact Command
+bot.command("fact", async (ctx) => {
+  const facts = [
+    "🐙 Octopuses have 3 hearts.",
+    "⚡ Lightning is hotter than the sun.",
+    "🦒 A giraffe’s tongue is purple.",
+    "🌍 Earth is the only known planet with life.",
+    "💧 Hot water freezes faster than cold water sometimes."
+  ];
+
+  const random = facts[Math.floor(Math.random() * facts.length)];
+
+  ctx.reply(`📚 Random Fact:\n\n${random}`);
+});
+
+// Truth Command
+bot.command("truth", async (ctx) => {
+  const truths = [
+    "What is your biggest fear?",
+    "Who was your first crush?",
+    "What secret have you never told anyone?",
+    "What is your most embarrassing moment?",
+    "Have you ever lied to your best friend?"
+  ];
+
+  const random = truths[Math.floor(Math.random() * truths.length)];
+
+  ctx.reply(`🤫 Truth Question:\n\n${random}`);
+});
+
+// Dare Command
+bot.command("dare", async (ctx) => {
+  const dares = [
+    "Send a funny selfie 😂",
+    "Sing your favorite song 🎤",
+    "Text someone 'I miss you' 😅",
+    "Talk in a robot voice for 1 minute 🤖",
+    "Dance without music for 30 seconds 💃"
+  ];
+
+  const random = dares[Math.floor(Math.random() * dares.length)];
+
+  ctx.reply(`😈 Dare Challenge:\n\n${random}`);
+});
+
+// Ship Command
+bot.command("ship", async (ctx) => {
+  const text = ctx.message.text.split(" ").slice(1).join(" ");
+
+  if (!text.includes("&")) {
+    return ctx.reply("❌ Use format:\n/ship name1 & name2");
+  }
+
+  const names = text.split("&");
+
+  const name1 = names[0].trim();
+  const name2 = names[1].trim();
+
+  const percentage = Math.floor(Math.random() * 101);
+
+  let result = "💔 Not compatible";
+
+  if (percentage > 50) result = "❤️ Cute couple";
+  if (percentage > 75) result = "💍 Perfect match";
+  if (percentage > 90) result = "🔥 Soulmates";
+
+  ctx.reply(
+    `💘 Love Calculator\n\n${name1} ❤️ ${name2}\n\nCompatibility: ${percentage}%\n${result}`
+  );
+});
+
+// Meme Command
+bot.command("meme", async (ctx) => {
+  const memes = [
+    "https://i.imgflip.com/30b1gx.jpg",
+    "https://i.imgflip.com/1bij.jpg",
+    "https://i.imgflip.com/26am.jpg",
+    "https://i.imgflip.com/4t0m5.jpg"
+  ];
+
+  const random = memes[Math.floor(Math.random() * memes.length)];
+
+  ctx.replyWithPhoto(random, {
+    caption: "😂 Random Meme"
+  });
+});
