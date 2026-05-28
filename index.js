@@ -9,9 +9,7 @@ const bot = new TelegramBot(token, {
   polling: true
 });
 
-bot.on('polling_error', (error) => {
-  console.log(error);
-});
+bot.on('polling_error', console.log);
 
 bot.onText(/\/start/, (msg) => {
 
@@ -19,115 +17,19 @@ bot.onText(/\/start/, (msg) => {
 `👋 Welcome to Lucid XMD Bot!
 
 Use /menu to explore features.`);
+
 });
 
 bot.onText(/\/menu/, (msg) => {
 
-  const chatId = msg.chat.id;
-
-  bot.sendMessage(chatId,
+  bot.sendMessage(msg.chat.id,
 `╭━━━〔 LUCID XMD 〕━━⬣
 ┃ 🤖 AI Powered Bot
 ┃ ⚡ Status: Online
 ┃ 👨‍💻 Developer: Lucid
 ╰━━━━━━━━━━━━━━⬣
 
-Choose an option below 👇`,
-{
-  reply_markup: {
-    inline_keyboard: [
-
-      [
-        { text: '🤖 AI Chat', callback_data: 'ai' },
-        { text: '🎵 Music', callback_data: 'music' }
-      ],
-
-      [
-        { text: '📥 Downloaders', callback_data: 'download' },
-        { text: '⚙️ Utilities', callback_data: 'tools' }
-      ],
-
-      [
-        { text: '👑 Owner', callback_data: 'owner' },
-        { text: '❓ Help', callback_data: 'help' }
-      ]
-
-    ]
-  }
-});
-
-});
-
-bot.on('callback_query', async (query) => {
-
-  const chatId = query.message.chat.id;
-  const data = query.data;
-
-  if (data === 'ai') {
-
-    bot.sendMessage(chatId,
-`🤖 AI COMMANDS
-
-/ai hello
-/ai write a poem`);
-
-  }
-
-  else if (data === 'music') {
-
-    bot.sendMessage(chatId,
-`🎵 MUSIC COMMANDS
-
-/ytmp3 believer`);
-
-  }
-
-  else if (data === 'download') {
-
-    bot.sendMessage(chatId,
-`📥 DOWNLOADER COMMANDS
-
-/tiktok link
-/instagram link`);
-
-  }
-
-  else if (data === 'tools') {
-
-    bot.sendMessage(chatId,
-`⚙️ UTILITIES
-
-/weather
-/sticker`);
-
-  }
-
-  else if (data === 'owner') {
-
-    bot.sendMessage(chatId,
-`👑 OWNER INFO
-
-Developer: Lucid Tech Solutions`);
-
-  }
-
-  else if (data === 'help') {
-
-    bot.sendMessage(chatId,
-`❓ HELP MENU
-
-Use /menu to access commands.`);
-
-  }
-
-});
-
-bot.onText(/\/help/, (msg) => {
-
-  bot.sendMessage(msg.chat.id,
-`🆘 Need help?
-
-Developer: Lucid Tech Solutions`);
+Choose an option below 👇`);
 
 });
 
@@ -164,7 +66,7 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
 
   } catch (error) {
 
-    console.log(error.response?.data || error.message);
+    console.log(error);
 
     bot.sendMessage(chatId,
 '❌ AI request failed.');
@@ -191,9 +93,7 @@ bot.onText(/\/ytmp3 (.+)/, async (msg, match) => {
     }
 
     bot.sendMessage(chatId,
-`🎵 Found:
-
-${video.title}
+`🎵 ${video.title}
 
 🔗 ${video.url}`);
 
@@ -211,30 +111,30 @@ ${video.title}
 bot.onText(/\/tiktok (.+)/, async (msg, match) => {
 
   const chatId = msg.chat.id;
-  const link = match[1];
+  const url = match[1];
 
-  bot.sendMessage(chatId,
-`🎬 TikTok Downloader
+  bot.sendMessage(chatId, '📥 Downloading TikTok video...');
 
-🔗 Your link:
-${link}
+  try {
 
-⚠️ Full downloader API coming soon 😎`);
+    const api = `https://tikwm.com/api/?url=${encodeURIComponent(url)}`;
 
-});
+    const response = await axios.get(api);
 
-bot.onText(/\/instagram (.+)/, async (msg, match) => {
+    const video = response.data.data.play;
 
-  const chatId = msg.chat.id;
-  const link = match[1];
+    await bot.sendVideo(chatId, video, {
+      caption: '✅ TikTok downloaded successfully'
+    });
 
-  bot.sendMessage(chatId,
-`📸 Instagram Downloader
+  } catch (error) {
 
-🔗 Your link:
-${link}
+    console.log(error);
 
-⚠️ Full downloader API coming soon 😎`);
+    bot.sendMessage(chatId,
+'❌ Failed to download TikTok video.');
+
+  }
 
 });
 
