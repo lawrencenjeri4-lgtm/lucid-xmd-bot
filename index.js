@@ -17,7 +17,7 @@ bot.on('polling_error', (error) => {
 
 
 
-// START COMMAND
+// ================= START =================
 
 bot.onText(/\/start/, (msg) => {
 
@@ -33,7 +33,7 @@ Use /menu to explore commands.`);
 
 
 
-// MENU COMMAND
+// ================= MENU =================
 
 bot.onText(/\/menu/, (msg) => {
 
@@ -74,7 +74,7 @@ Choose an option below 👇`,
 
 
 
-// BUTTON RESPONSES
+// ================= BUTTONS =================
 
 bot.on('callback_query', async (query) => {
 
@@ -136,8 +136,11 @@ Usage:
     bot.sendMessage(chatId,
 `❓ HELP MENU
 
-Use:
-/menu`);
+/menu - Open menu
+/ai - Chat with AI
+/ytmp3 - Search songs
+/tiktok - Download TikTok
+/instagram - Instagram info`);
 
   }
 
@@ -145,7 +148,7 @@ Use:
 
 
 
-// HELP COMMAND
+// ================= HELP =================
 
 bot.onText(/\/help/, (msg) => {
 
@@ -156,13 +159,13 @@ bot.onText(/\/help/, (msg) => {
 /ai - Chat with AI
 /ytmp3 - Search songs
 /tiktok - Download TikTok
-/instagram - Download Instagram`);
+/instagram - Instagram info`);
 
 });
 
 
 
-// AI COMMAND
+// ================= AI =================
 
 bot.onText(/\/ai (.+)/, async (msg, match) => {
 
@@ -208,7 +211,7 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
 
 
 
-// YOUTUBE SEARCH
+// ================= YOUTUBE SEARCH =================
 
 bot.onText(/\/ytmp3 (.+)/, async (msg, match) => {
 
@@ -251,7 +254,7 @@ bot.onText(/\/ytmp3 (.+)/, async (msg, match) => {
 
 
 
-// TIKTOK DOWNLOADER
+// ================= TIKTOK DOWNLOADER =================
 
 bot.onText(/\/tiktok (.+)/, async (msg, match) => {
 
@@ -301,45 +304,26 @@ bot.onText(/\/tiktok (.+)/, async (msg, match) => {
 
 
 
-// INSTAGRAM DOWNLOADER
+// ================= INSTAGRAM =================
 
 bot.onText(/\/instagram (.+)/, async (msg, match) => {
 
   const chatId = msg.chat.id;
   const url = match[1];
 
-  bot.sendMessage(chatId,
-'📸 Processing Instagram link...');
+  if (!url.includes('instagram.com')) {
 
-  try {
-
-    const apiUrl =
-`https://api.ryzendesu.vip/api/downloader/igdl?url=${encodeURIComponent(url)}`;
-
-    const response = await axios.get(apiUrl);
-
-    const media = response.data.data[0];
-
-    if (!media) {
-
-      return bot.sendMessage(chatId,
-      '❌ Failed to fetch Instagram media.');
-
-    }
-
-    await bot.sendVideo(chatId, media.url, {
-      caption: '✅ Instagram media downloaded'
-    });
-
-  } catch (error) {
-
-    console.log(error.response?.data || error.message);
-
-    bot.sendMessage(chatId,
-`❌ Instagram download failed.
-
-Try another reel/video link.`);
+    return bot.sendMessage(chatId,
+    '❌ Please provide a valid Instagram link.');
 
   }
+
+  bot.sendMessage(chatId,
+`📸 Instagram Downloader
+
+⚠️ Instagram API is temporarily unavailable.
+
+🔗 Your Link:
+${url}`);
 
 });
