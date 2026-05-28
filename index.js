@@ -200,20 +200,20 @@ bot.onText(/\/ytmp3 (.+)/, async (msg, match) => {
 
 ${video.title}
 
-⏳ Sending audio...`);
+📥 Sending download link...`);
 
-    const audioUrl = `https://www.youtube.com/watch?v=${video.videoId}`;
+    bot.sendMessage(chatId,
+`🎶 ${video.title}
 
-    bot.sendAudio(chatId, audioUrl, {
-      caption: `🎶 ${video.title}`
-    });
+🔗 YouTube Link:
+${video.url}`);
 
   } catch (error) {
 
     console.log(error);
 
     bot.sendMessage(chatId,
-'❌ Failed to send audio.');
+'❌ Failed to fetch song.');
 
   }
 
