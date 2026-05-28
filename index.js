@@ -2,7 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 
 const token = process.env.BOT_TOKEN;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 const bot = new TelegramBot(token, {
   polling: true
@@ -51,9 +51,9 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
   try {
 
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      'https://api.groq.com/openai/v1/chat/completions',
       {
-        model: 'gpt-3.5-turbo',
+        model: 'llama3-8b-8192',
         messages: [
           {
             role: 'user',
@@ -63,7 +63,7 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
       },
       {
         headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
           'Content-Type': 'application/json'
         }
       }
