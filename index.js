@@ -1,6 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
-const ytdl = require('ytdl-core');
 const yts = require('yt-search');
 
 const token = process.env.BOT_TOKEN;
@@ -70,7 +69,8 @@ bot.on('callback_query', async (query) => {
 `🤖 AI COMMANDS
 
 /ai hello
-/ai write a poem`);
+/ai write a poem
+/ai explain coding`);
 
   }
 
@@ -202,13 +202,10 @@ ${video.title}
 
 ⏳ Sending audio...`);
 
-    const audio = ytdl(video.url, {
-      filter: 'audioonly'
-    });
+    const audioUrl = `https://www.youtube.com/watch?v=${video.videoId}`;
 
-    bot.sendAudio(chatId, audio, {
-      title: video.title,
-      performer: video.author.name
+    bot.sendAudio(chatId, audioUrl, {
+      caption: `🎶 ${video.title}`
     });
 
   } catch (error) {
@@ -216,7 +213,7 @@ ${video.title}
     console.log(error);
 
     bot.sendMessage(chatId,
-'❌ Failed to download audio.');
+'❌ Failed to send audio.');
 
   }
 
