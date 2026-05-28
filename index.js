@@ -1,5 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
+const ytdl = require('ytdl-core');
+const yts = require('yt-search');
 
 const token = process.env.BOT_TOKEN;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
@@ -68,8 +70,7 @@ bot.on('callback_query', async (query) => {
 `🤖 AI COMMANDS
 
 /ai hello
-/ai write a poem
-/ai explain coding`);
+/ai write a poem`);
 
   }
 
@@ -78,9 +79,8 @@ bot.on('callback_query', async (query) => {
     bot.sendMessage(chatId,
 `🎵 MUSIC COMMANDS
 
-/spotify
-/ytmp3
-/play`);
+/ytmp3 believer
+/play faded`);
 
   }
 
@@ -101,8 +101,7 @@ bot.on('callback_query', async (query) => {
 `⚙️ UTILITIES
 
 /weather
-/sticker
-/qr`);
+/sticker`);
 
   }
 
@@ -174,6 +173,50 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
 `❌ AI Error:
 
 ${JSON.stringify(error.response?.data || error.message, null, 2)}`);
+
+  }
+
+});
+
+bot.onText(/\/ytmp3 (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const query = match[1];
+
+  bot.sendMessage(chatId, '🔍 Searching song...');
+
+  try {
+
+    const search = await yts(query);
+
+    const video = search.videos[0];
+
+    if (!video) {
+      return bot.sendMessage(chatId, '❌ Song not found.');
+    }
+
+    bot.sendMessage(chatId,
+`🎵 Found:
+
+${video.title}
+
+⏳ Sending audio...`);
+
+    const audio = ytdl(video.url, {
+      filter: 'audioonly'
+    });
+
+    bot.sendAudio(chatId, audio, {
+      title: video.title,
+      performer: video.author.name
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    bot.sendMessage(chatId,
+'❌ Failed to download audio.');
 
   }
 
