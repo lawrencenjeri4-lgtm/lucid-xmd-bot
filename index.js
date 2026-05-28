@@ -13,6 +13,7 @@ bot.on('polling_error', (error) => {
 });
 
 bot.onText(/\/start/, (msg) => {
+
   bot.sendMessage(msg.chat.id,
 `👋 Welcome to Lucid XMD Bot!
 
@@ -20,16 +21,118 @@ Use /menu to explore features.`);
 });
 
 bot.onText(/\/menu/, (msg) => {
-  bot.sendMessage(msg.chat.id,
-`📜 LUCID XMD MENU
 
-🤖 AI
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId,
+`╭━━━〔 LUCID XMD 〕━━⬣
+┃ 🤖 AI Powered Bot
+┃ ⚡ Status: Online
+┃ 👨‍💻 Developer: Lucid
+╰━━━━━━━━━━━━━━⬣
+
+Choose an option below 👇`,
+{
+  reply_markup: {
+    inline_keyboard: [
+
+      [
+        { text: '🤖 AI Chat', callback_data: 'ai' },
+        { text: '🎵 Music', callback_data: 'music' }
+      ],
+
+      [
+        { text: '📥 Downloaders', callback_data: 'download' },
+        { text: '⚙️ Utilities', callback_data: 'tools' }
+      ],
+
+      [
+        { text: '👑 Owner', callback_data: 'owner' },
+        { text: '❓ Help', callback_data: 'help' }
+      ]
+
+    ]
+  }
+});
+
+});
+
+bot.on('callback_query', async (query) => {
+
+  const chatId = query.message.chat.id;
+  const data = query.data;
+
+  if (data === 'ai') {
+
+    bot.sendMessage(chatId,
+`🤖 AI COMMANDS
+
 /ai hello
+/ai write a poem
+/ai explain coding`);
 
-🎵 Downloads
+  }
+
+  else if (data === 'music') {
+
+    bot.sendMessage(chatId,
+`🎵 MUSIC COMMANDS
+
 /spotify
 /ytmp3
-/tiktok`);
+/play`);
+
+  }
+
+  else if (data === 'download') {
+
+    bot.sendMessage(chatId,
+`📥 DOWNLOADER COMMANDS
+
+/tiktok
+/facebook
+/instagram`);
+
+  }
+
+  else if (data === 'tools') {
+
+    bot.sendMessage(chatId,
+`⚙️ UTILITIES
+
+/weather
+/sticker
+/qr`);
+
+  }
+
+  else if (data === 'owner') {
+
+    bot.sendMessage(chatId,
+`👑 OWNER INFO
+
+Developer: Lucid Tech Solutions`);
+
+  }
+
+  else if (data === 'help') {
+
+    bot.sendMessage(chatId,
+`❓ HELP MENU
+
+Use /menu to access commands.`);
+
+  }
+
+});
+
+bot.onText(/\/help/, (msg) => {
+
+  bot.sendMessage(msg.chat.id,
+`🆘 Need help?
+
+Developer: Lucid Tech Solutions`);
+
 });
 
 bot.onText(/\/ai (.+)/, async (msg, match) => {
@@ -49,29 +152,4 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
         'Content-Type': 'application/json'
       },
       data: {
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
-      }
-    });
-
-    const reply = response.data.choices[0].message.content;
-
-    bot.sendMessage(chatId, reply);
-
-  } catch (error) {
-
-    console.log(error.response?.data || error.message);
-
-    bot.sendMessage(chatId,
-`${JSON.stringify(error.response?.data || error.message, null, 2)}`);
-
-  }
-
-});
-
-console.log('Lucid XMD Bot Running...');
+        model: 'llama-3.
