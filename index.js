@@ -8,7 +8,9 @@ const bot = new TelegramBot(token, {
   polling: true
 });
 
-bot.on('polling_error', console.log);
+bot.on('polling_error', (error) => {
+  console.log(error);
+});
 
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id,
@@ -22,23 +24,12 @@ bot.onText(/\/menu/, (msg) => {
 `📜 LUCID XMD MENU
 
 🤖 AI
-/ai
+/ai hello
 
 🎵 Downloads
 /spotify
 /ytmp3
-/tiktok
-
-🛠 Utilities
-/weather
-/sticker`);
-});
-
-bot.onText(/\/help/, (msg) => {
-  bot.sendMessage(msg.chat.id,
-`🆘 Need help?
-
-Developer: Lucid Tech Solutions`);
+/tiktok`);
 });
 
 bot.onText(/\/ai (.+)/, async (msg, match) => {
@@ -50,9 +41,14 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
 
   try {
 
-    const response = await axios.post(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
+    const response = await axios({
+      method: 'post',
+      url: 'https://api.groq.com/openai/v1/chat/completions',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      data: {
         model: 'llama3-8b-8192',
         messages: [
           {
@@ -60,14 +56,8 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
             content: prompt
           }
         ]
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
       }
-    );
+    });
 
     const reply = response.data.choices[0].message.content;
 
@@ -78,9 +68,7 @@ bot.onText(/\/ai (.+)/, async (msg, match) => {
     console.log(error.response?.data || error.message);
 
     bot.sendMessage(chatId,
-`❌ AI Error:
-
-${error.response?.data?.error?.message || error.message}`);
+`${JSON.stringify(error.response?.data || error.message, null, 2)}`);
 
   }
 
