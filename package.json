@@ -1,17 +1,11 @@
 {
   "name": "lucid-xmd-bot",
   "version": "1.0.0",
-  "description": "Powerful Telegram bot by Lucid Tech Solutions",
+  "description": "Lucid XMD Telegram Bot",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "keywords": [
-    "telegram",
-    "bot",
-    "ai",
-    "music"
-  ],
   "author": "Lucid Tech Solutions",
   "license": "MIT",
   "dependencies": {
