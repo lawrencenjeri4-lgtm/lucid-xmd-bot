@@ -482,3 +482,48 @@ https://t.me/grimtech
 📍 Nairobi, Kenya`);
 
 });
+// ================= WEATHER =================
+
+bot.onText(/\/weather (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const city = match[1];
+
+  bot.sendMessage(chatId,
+'🌦 Fetching weather data...');
+
+  try {
+
+    const response = await axios.get(
+      `https://wttr.in/${city}?format=j1`
+    );
+
+    const data = response.data;
+
+    const current = data.current_condition[0];
+
+    const temp = current.temp_C;
+    const feels = current.FeelsLikeC;
+    const humidity = current.humidity;
+    const wind = current.windspeedKmph;
+    const desc = current.weatherDesc[0].value;
+
+    bot.sendMessage(chatId,
+`🌤 Weather in ${city}
+
+🌡 Temperature: ${temp}°C
+🥵 Feels Like: ${feels}°C
+💧 Humidity: ${humidity}%
+💨 Wind Speed: ${wind} km/h
+☁️ Condition: ${desc}`);
+
+  } catch (error) {
+
+    console.log(error);
+
+    bot.sendMessage(chatId,
+'❌ Failed to fetch weather.');
+
+  }
+
+});
