@@ -688,3 +688,32 @@ bot.onText(/\/time/, async (msg) => {
 📍 Nairobi, Kenya`);
 
 });
+// ================= CALCULATOR =================
+
+bot.onText(/\/calc (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+
+  const expression = match[1];
+
+  try {
+
+    const result = eval(expression);
+
+    bot.sendMessage(chatId,
+`🧮 CALCULATOR
+
+📥 Expression:
+${expression}
+
+✅ Result:
+${result}`);
+
+  } catch (error) {
+
+    bot.sendMessage(chatId,
+'❌ Invalid calculation.');
+
+  }
+
+});
