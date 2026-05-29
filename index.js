@@ -887,3 +887,77 @@ bot.onText(/\/tagall/, async (msg) => {
 '❌ Tagall works only in groups.');
     }
 });
+// ================= PLAY / SONG =================
+
+bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
+
+    const chatId = msg.chat.id;
+    const query = match[2];
+
+    try {
+
+        bot.sendMessage(chatId,
+`🔍 Searching song...
+
+🎵 Query: ${query}`);
+
+        const search = await yts(query);
+
+        if (!search.videos.length) {
+            return bot.sendMessage(chatId,
+'❌ Song not found.');
+        }
+
+        const video = search.videos[0];
+
+        const title = video.title;
+        const ytUrl = video.url;
+        const duration = video.timestamp;
+        const views = video.views;
+        const artist = video.author.name;
+        const thumbnail = video.thumbnail;
+
+        // Send Thumbnail First
+        await bot.sendPhoto(chatId, thumbnail, {
+            caption:
+`🎵 *Song Found*
+
+📌 Title: ${title}
+⏱ Duration: ${duration}
+👀 Views: ${views}
+👤 Artist: ${artist}
+
+⬇ Downloading audio...`,
+            parse_mode: 'Markdown'
+        });
+
+        // MP3 API
+        const apiUrl =
+`https://api.giftedtech.web.id/api/download/dlmp3?apikey=gifted&url=${encodeURIComponent(ytUrl)}`;
+
+        const response = await axios.get(apiUrl);
+
+        const audioUrl = response.data.result.download_url;
+
+        // Send Audio Player Format
+        await bot.sendAudio(chatId, audioUrl, {
+            title: title,
+            performer: artist,
+            caption:
+`🎧 Now Playing
+
+🎵 ${title}
+👤 ${artist}`,
+            parse_mode: 'Markdown'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        bot.sendMessage(chatId,
+'❌ Failed to download song.');
+
+    }
+
+});
