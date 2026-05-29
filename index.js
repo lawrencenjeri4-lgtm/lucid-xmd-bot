@@ -460,3 +460,22 @@ bot.onText(/\/meme/, async (msg) => {
     caption: "😂 Random Meme"
   });
 });
+// ================= OWNER =================
+
+bot.onText(/\/owner/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId,
+`👑 OWNER INFORMATION
+
+Name: Lawrence
+Bot: Lucid XMD
+Company: Lucid Tech Solutions
+
+📞 WhatsApp:
++254780503649
+
+📍 Nairobi, Kenya`);
+
+});
