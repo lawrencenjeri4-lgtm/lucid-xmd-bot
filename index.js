@@ -932,7 +932,7 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
         });
 
         // MP3 API
-        const apiUrl = `https://api.giftedtech.web.id/api/download/ytmp3?url=${video.url}&apikey=gifted`;
+        const apiUrl = `https://api.giftedtech.web.id/api/download/ytaudio?url=${video.url}&apikey=gifted`;
 
 const response = await axios.get(apiUrl);
 
