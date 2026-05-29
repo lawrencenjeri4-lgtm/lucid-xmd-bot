@@ -766,3 +766,37 @@ bot.onText(/\/news/, async (msg) => {
   }
 
 });
+// ================= WELCOME & GOODBYE =================
+
+// Welcome Message
+bot.on('new_chat_members', async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  const newMembers = msg.new_chat_members;
+
+  newMembers.forEach((member) => {
+
+    bot.sendMessage(chatId,
+`👋 Welcome ${member.first_name} to the group!
+
+🤖 Powered by Lucid XMD
+🔥 Enjoy your stay.`);
+    
+  });
+
+});
+
+// Goodbye Message
+bot.on('left_chat_member', async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  const member = msg.left_chat_member;
+
+  bot.sendMessage(chatId,
+`😢 Goodbye ${member.first_name}
+
+We will miss you 💔`);
+
+});
