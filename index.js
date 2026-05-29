@@ -557,11 +557,13 @@ OR reply to a message with:
     // Reply translation
     if (msg.reply_to_message) {
 
-      targetLang = args.toLowerCase();
+  const parts = args.split(" ");
 
-      textToTranslate =
-        msg.reply_to_message.text ||
-        msg.reply_to_message.caption;
+  targetLang = parts.shift().toLowerCase();
+
+  textToTranslate =
+    msg.reply_to_message.text ||
+    msg.reply_to_message.caption;
 
     }
 
@@ -629,10 +631,12 @@ hindi`);
     bot.sendMessage(chatId,
 '🌍 Translating...');
 
-    const translated = await translate(
-      textToTranslate,
-      { to: langCode }
-    );
+    const result = await translate.translate(
+  textToTranslate,
+  { to: langCode }
+);
+
+const translated = result.text;
 
     bot.sendMessage(chatId,
 `🌍 Translation
