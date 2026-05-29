@@ -476,6 +476,9 @@ Company: Lucid Tech Solutions
 📞 WhatsApp:
 +254780503649
 
+💬 Telegram:
+https://t.me/grimtech
+
 📍 Nairobi, Kenya`);
 
 });
