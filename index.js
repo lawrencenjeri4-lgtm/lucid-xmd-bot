@@ -657,3 +657,34 @@ ${translated}`);
   }
 
 });
+// ================= TIME =================
+
+bot.onText(/\/time/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  const now = new Date();
+
+  const time = now.toLocaleTimeString('en-KE', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+
+  const date = now.toLocaleDateString('en-KE', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  bot.sendMessage(chatId,
+`⏰ CURRENT TIME
+
+🕒 Time: ${time}
+
+📅 Date: ${date}
+
+📍 Nairobi, Kenya`);
+
+});
