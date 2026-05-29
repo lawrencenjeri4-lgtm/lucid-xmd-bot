@@ -9,7 +9,11 @@
   "dependencies": {
     "@vitalets/google-translate-api": "^9.2.1",
     "axios": "^1.6.8",
+    "ffmpeg-static": "^5.2.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "mathjs": "^14.0.0",
     "node-telegram-bot-api": "^0.66.0",
+    "yt-dlp-exec": "^1.0.2",
     "yt-search": "^2.10.4"
   }
 }
