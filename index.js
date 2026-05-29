@@ -717,3 +717,52 @@ ${result}`);
   }
 
 });
+// ================= NEWS =================
+
+bot.onText(/\/news/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId,
+'📰 Fetching latest news...');
+
+  try {
+
+    const response = await axios.get(
+      `https://gnews.io/api/v4/top-headlines?country=us&lang=en&max=5&apikey=${process.env.GNEWS_API}`
+    );
+
+    const articles = response.data.articles;
+
+    if (!articles.length) {
+
+      return bot.sendMessage(chatId,
+      '❌ No news found.');
+
+    }
+
+    let newsText = '📰 TOP NEWS\n\n';
+
+    articles.forEach((article, index) => {
+
+      newsText +=
+`${index + 1}. ${article.title}
+
+🔗 ${article.url}
+
+`;
+
+    });
+
+    bot.sendMessage(chatId, newsText);
+
+  } catch (error) {
+
+    console.log(error.response?.data || error.message);
+
+    bot.sendMessage(chatId,
+'❌ Failed to fetch news.');
+
+  }
+
+});
