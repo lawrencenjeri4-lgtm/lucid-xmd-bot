@@ -3,6 +3,9 @@ const axios = require('axios');
 const yts = require('yt-search');
 const translate = require('@vitalets/google-translate-api');
 const startTime = Date.now();
+const fs = require('fs');
+const path = require('path');
+const youtubedl = require('yt-dlp-exec');
 
 const token = process.env.BOT_TOKEN;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
@@ -917,40 +920,47 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
         const artist = video.author.name;
         const thumbnail = video.thumbnail;
 
-        // Send Thumbnail First
         await bot.sendPhoto(chatId, thumbnail, {
             caption:
-`🎵 *Song Found*
+`🎵 Song Found
 
 📌 Title: ${title}
 ⏱ Duration: ${duration}
 👀 Views: ${views}
 👤 Artist: ${artist}
 
-⬇ Downloading audio...`,
-            parse_mode: 'Markdown'
+⬇ Downloading audio...`
         });
 
-        // MP3 API
-        const apiUrl = `https://api.giftedtech.web.id/api/download/ytaudio?url=${video.url}&apikey=gifted`;
+        // File path
+        const filePath = path.join(__dirname, `${Date.now()}.mp3`);
 
-const response = await axios.get(apiUrl);
+        // Download audio
+        await youtubedl(ytUrl, {
+            extractAudio: true,
+            audioFormat: 'mp3',
+            output: filePath
+        });
 
-const audioUrl = response.data.result.download_url || response.data.result.download;
+        // Send audio
+        await bot.sendAudio(chatId, filePath, {
+            caption:
+`🎧 Now Playing
 
-await bot.sendAudio(chatId, audioUrl, {
-  title: title,
-  performer: artist,
-  caption: `🎧 Now Playing\n\n🎵 ${title}\n👤 ${artist}`,
-  parse_mode: 'Markdown'
-});
-      } catch (error) {
+🎵 ${title}
+👤 ${artist}`
+        });
 
-console.log(error);
+        // Delete file after sending
+        fs.unlinkSync(filePath);
 
-bot.sendMessage(chatId,
+    } catch (error) {
+
+        console.log(error);
+
+        bot.sendMessage(chatId,
 '❌ Failed to download song.');
 
-}
+    }
 
 });
