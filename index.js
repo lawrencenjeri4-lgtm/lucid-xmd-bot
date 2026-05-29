@@ -932,32 +932,25 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
         });
 
         // MP3 API
-        const apiUrl =
-`https://api.giftedtech.web.id/api/download/ytaudio?apikey=gifted&url=${encodeURIComponent(ytUrl)}`;
+        const apiUrl = `https://api.giftedtech.web.id/api/download/ytmp3?url=${video.url}&apikey=gifted`;
 
 const response = await axios.get(apiUrl);
 
-const audioUrl = response.data.result.download;
+const audioUrl = response.data.result.download_url || response.data.result.download;
 
-        // Send Audio Player Format
-        await bot.sendAudio(chatId, audioUrl, {
-            title: title,
-            performer: artist,
-            caption:
-`🎧 Now Playing
+await bot.sendAudio(chatId, audioUrl, {
+  title: title,
+  performer: artist,
+  caption: `🎧 Now Playing\n\n🎵 ${title}\n👤 ${artist}`,
+  parse_mode: 'Markdown'
+});
+      } catch (error) {
 
-🎵 ${title}
-👤 ${artist}`,
-            parse_mode: 'Markdown'
-        });
+console.log(error);
 
-    } catch (error) {
-
-        console.log(error);
-
-        bot.sendMessage(chatId,
+bot.sendMessage(chatId,
 '❌ Failed to download song.');
 
-    }
+}
 
 });
