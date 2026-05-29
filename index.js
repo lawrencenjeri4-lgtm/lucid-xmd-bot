@@ -933,11 +933,11 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
 
         // MP3 API
         const apiUrl =
-`https://api.giftedtech.web.id/api/download/dlmp3?apikey=gifted&url=${encodeURIComponent(ytUrl)}`;
+`https://api.giftedtech.web.id/api/download/ytaudio?apikey=gifted&url=${encodeURIComponent(ytUrl)}`;
 
-        const response = await axios.get(apiUrl);
+const response = await axios.get(apiUrl);
 
-        const audioUrl = response.data.result.download_url;
+const audioUrl = response.data.result.download;
 
         // Send Audio Player Format
         await bot.sendAudio(chatId, audioUrl, {
