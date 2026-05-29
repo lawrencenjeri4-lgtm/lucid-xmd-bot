@@ -527,3 +527,128 @@ bot.onText(/\/weather (.+)/, async (msg, match) => {
   }
 
 });
+// ================= TRANSLATE =================
+
+bot.onText(/\/translate(?: (.+))?/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+
+  let args = match[1];
+
+  if (!args) {
+
+    return bot.sendMessage(chatId,
+`🌍 Usage Examples:
+
+/translate french Hello world
+
+OR reply to a message with:
+
+/translate swahili`);
+
+  }
+
+  try {
+
+    let targetLang;
+    let textToTranslate;
+
+    // Reply translation
+    if (msg.reply_to_message) {
+
+      targetLang = args.toLowerCase();
+
+      textToTranslate =
+        msg.reply_to_message.text ||
+        msg.reply_to_message.caption;
+
+    }
+
+    // Normal translation
+    else {
+
+      const parts = args.split(" ");
+
+      targetLang = parts.shift().toLowerCase();
+
+      textToTranslate = parts.join(" ");
+
+    }
+
+    if (!textToTranslate) {
+
+      return bot.sendMessage(chatId,
+      '❌ No text found to translate.');
+
+    }
+
+    const languageMap = {
+
+      swahili: 'sw',
+      french: 'fr',
+      spanish: 'es',
+      german: 'de',
+      italian: 'it',
+      portuguese: 'pt',
+      arabic: 'ar',
+      chinese: 'zh-cn',
+      japanese: 'ja',
+      korean: 'ko',
+      russian: 'ru',
+      hindi: 'hi',
+      english: 'en'
+
+    };
+
+    const langCode =
+      languageMap[targetLang];
+
+    if (!langCode) {
+
+      return bot.sendMessage(chatId,
+`❌ Unsupported language.
+
+Supported:
+english
+swahili
+french
+spanish
+german
+italian
+portuguese
+arabic
+chinese
+japanese
+korean
+russian
+hindi`);
+
+    }
+
+    bot.sendMessage(chatId,
+'🌍 Translating...');
+
+    const translated = await translate(
+      textToTranslate,
+      { to: langCode }
+    );
+
+    bot.sendMessage(chatId,
+`🌍 Translation
+
+📝 Original:
+${textToTranslate}
+
+✅ ${targetLang}:
+${translated}`);
+
+  } catch (error) {
+
+    console.log(error);
+
+    bot.sendMessage(chatId,
+'❌ Translation failed.');
+
+  }
+
+});
