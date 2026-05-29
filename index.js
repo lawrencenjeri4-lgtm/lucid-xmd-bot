@@ -2,6 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 const yts = require('yt-search');
 const translate = require('@vitalets/google-translate-api');
+const startTime = Date.now();
 
 const token = process.env.BOT_TOKEN;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
@@ -799,4 +800,90 @@ bot.on('left_chat_member', async (msg) => {
 
 We will miss you 💔`);
 
+});
+// =============== PING ===============
+
+bot.onText(/\/ping/, async (msg) => {
+    const chatId = msg.chat.id;
+
+    bot.sendMessage(chatId,
+`🏓 Pong!
+
+✅ Bot Status: Online
+⚡ Speed: Fast`);
+});
+// =============== RUNTIME ===============
+
+bot.onText(/\/runtime/, async (msg) => {
+    const chatId = msg.chat.id;
+
+    const uptime = process.uptime();
+
+    const hours = Math.floor(uptime / 3600);
+    const minutes = Math.floor((uptime % 3600) / 60);
+    const seconds = Math.floor(uptime % 60);
+
+    bot.sendMessage(chatId,
+`⏳ BOT RUNTIME
+
+🟢 Online for:
+${hours}h ${minutes}m ${seconds}s`);
+});
+// =============== RULES ===============
+
+bot.onText(/\/rules/, async (msg) => {
+    const chatId = msg.chat.id;
+
+    bot.sendMessage(chatId,
+`📜 GROUP RULES
+
+1. Respect everyone
+2. No spam
+3. No adult content
+4. No fake news
+5. Follow admin instructions
+
+⚠️ Breaking rules may lead to removal.`);
+});
+// =============== ADMINS ===============
+
+bot.onText(/\/admins/, async (msg) => {
+    const chatId = msg.chat.id;
+
+    try {
+        const admins = await bot.getChatAdministrators(chatId);
+
+        let text = '👮 GROUP ADMINS\n\n';
+
+        admins.forEach((admin, index) => {
+            text += `${index + 1}. ${admin.user.first_name}\n`;
+        });
+
+        bot.sendMessage(chatId, text);
+
+    } catch (error) {
+        bot.sendMessage(chatId,
+'❌ This command only works in groups.');
+    }
+});
+// =============== TAGALL ===============
+
+bot.onText(/\/tagall/, async (msg) => {
+    const chatId = msg.chat.id;
+
+    try {
+        const admins = await bot.getChatAdministrators(chatId);
+
+        let text = '📢 ATTENTION EVERYONE\n\n';
+
+        admins.forEach(admin => {
+            text += `@${admin.user.username || admin.user.first_name}\n`;
+        });
+
+        bot.sendMessage(chatId, text);
+
+    } catch (error) {
+        bot.sendMessage(chatId,
+'❌ Tagall works only in groups.');
+    }
 });
