@@ -1223,3 +1223,62 @@ bot.onText(/\/groupinfo/, async (msg) => {
   }
 
 });
+// ================= USERINFO =================
+
+bot.onText(/\/userinfo/, async (msg) => {
+
+  const user = msg.from;
+
+  bot.sendMessage(
+    msg.chat.id,
+`👤 USER INFO
+
+📛 Name: ${user.first_name}
+🆔 ID: ${user.id}
+🌐 Username: @${user.username || "None"}
+🤖 Is Bot: ${user.is_bot ? "Yes" : "No"}`
+  );
+
+});
+// ================= REPORT =================
+
+bot.onText(/\/report (.+)/, (msg, match) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`🚨 REPORT SUBMITTED
+
+📝 Reason:
+${match[1]}
+
+✅ Admins have been notified.`
+  );
+
+});
+// ================= BAN =================
+
+bot.onText(/\/ban (.+)/, (msg, match) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`🔨 User Banned
+
+👤 ${match[1]}
+
+⚠️ Full ban system coming soon.`
+  );
+
+});
+// ================= UNBAN =================
+
+bot.onText(/\/unban (.+)/, (msg, match) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`🔓 User Unbanned
+
+👤 ${match[1]}`
+  );
+
+});
+
