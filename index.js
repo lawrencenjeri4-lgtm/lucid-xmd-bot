@@ -1504,35 +1504,24 @@ bot.onText(/\/crypto (.+)/, async (msg, match) => {
 
     try {
 
-        const response = await axios.get(
-            `https://api.binance.com/api/v3/ticker/price?symbol=${coin}USDT`
-        );
+        const url =
+            `https://api.binance.com/api/v3/ticker/price?symbol=${coin}USDT`;
 
-        const price = response.data.price;
+        const response = await axios.get(url);
 
         bot.sendMessage(
             msg.chat.id,
-`💰 CRYPTO PRICE
-
-🪙 Coin: ${coin}
-💵 Price: $${price}
-
-📈 Source: Binance`
+            `💰 ${coin}\n\nPrice: $${response.data.price}`
         );
 
     } catch (error) {
 
-        console.log("CRYPTO ERROR:", error.response?.data || error.message);
+        console.log("CRYPTO FULL ERROR:");
+        console.log(error.response?.data || error.message);
 
         bot.sendMessage(
             msg.chat.id,
-`❌ Coin not found.
-
-Examples:
-/crypto BTC
-/crypto ETH
-/crypto SOL
-/crypto XRP`
+            `❌ Error:\n${JSON.stringify(error.response?.data || error.message)}`
         );
 
     }
