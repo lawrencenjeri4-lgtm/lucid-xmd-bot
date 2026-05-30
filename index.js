@@ -1498,42 +1498,33 @@ bot.onText(/\/roast/, (msg) => {
 });
 // ================= CRYPTO =================
 
-bot.onText(/\/crypto (.+)/, async (msg, match) => {
-
-    const coin = match[1].toLowerCase();
+bot.onText(/\/crypto/, async (msg) => {
 
     try {
 
         const response = await axios.get(
-            `https://api.coincap.io/v2/assets/${coin}`
+            "https://api.coinlore.net/api/tickers/"
         );
 
-        const data = response.data.data;
+        const btc = response.data.data.find(
+            coin => coin.symbol === "BTC"
+        );
 
         bot.sendMessage(
             msg.chat.id,
-`💰 CRYPTO PRICE
+`💰 Bitcoin
 
-🪙 Coin: ${data.name}
-🔖 Symbol: ${data.symbol}
-💵 Price: $${parseFloat(data.priceUsd).toFixed(4)}
-
-📈 Source: CoinCap`
+💵 Price: $${btc.price_usd}
+📈 Rank: ${btc.rank}`
         );
 
     } catch (error) {
 
-        console.log("CRYPTO ERROR:", error.response?.data || error.message);
+        console.log("CRYPTO ERROR:", error.message);
 
         bot.sendMessage(
             msg.chat.id,
-`❌ Coin not found.
-
-Examples:
-/crypto bitcoin
-/crypto ethereum
-/crypto solana
-/crypto ripple`
+            "❌ Crypto service unavailable."
         );
 
     }
