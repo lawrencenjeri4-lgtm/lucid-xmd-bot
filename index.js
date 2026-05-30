@@ -1751,6 +1751,62 @@ ${response.data.lyrics.substring(0, 3500)}`
     }
 
 });
+// ================= ANIME =================
 
+bot.onText(/\/anime (.+)/, async (msg, match) => {
+
+  const query = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=1`
+    );
+
+    const anime = response.data.data[0];
+
+    if (!anime) {
+      return bot.sendMessage(
+        msg.chat.id,
+        '❌ Anime not found.'
+      );
+    }
+
+    await bot.sendPhoto(
+      msg.chat.id,
+      anime.images.jpg.image_url,
+      {
+        caption:
+`🎌 Anime Information
+
+📌 Title: ${anime.title}
+
+⭐ Score: ${anime.score || 'N/A'}
+
+📺 Episodes: ${anime.episodes || 'Unknown'}
+
+🎭 Genre:
+${anime.genres.map(g => g.name).join(', ')}
+
+📝 Synopsis:
+${anime.synopsis?.slice(0, 500) || 'No synopsis available.'}`
+      }
+    );
+
+  } catch (error) {
+
+    console.log(
+      "ANIME ERROR:",
+      error.response?.data || error.message
+    );
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Failed to fetch anime.'
+    );
+
+  }
+
+});
 
 
