@@ -1281,4 +1281,139 @@ bot.onText(/\/unban (.+)/, (msg, match) => {
   );
 
 });
+// ================= CODE =================
+
+bot.onText(/\/code (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const prompt = match[1];
+
+  bot.sendMessage(chatId,
+'💻 Generating code...');
+
+  try {
+
+    const response = await axios.post(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert programmer. Return only code with brief explanation.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    bot.sendMessage(
+      chatId,
+      response.data.choices[0].message.content
+    );
+
+  } catch (error) {
+
+    bot.sendMessage(
+      chatId,
+      '❌ Failed to generate code.'
+    );
+
+  }
+
+});
+// ================= EXPLAIN =================
+
+bot.onText(/\/explain (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const topic = match[1];
+
+  bot.sendMessage(chatId,
+'📚 Explaining...');
+
+  try {
+
+    const response = await axios.post(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'user',
+            content: `Explain ${topic} in simple terms`
+          }
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`
+        }
+      }
+    );
+
+    bot.sendMessage(
+      chatId,
+      response.data.choices[0].message.content
+    );
+
+  } catch (error) {
+
+    bot.sendMessage(chatId,
+'❌ Explanation failed.');
+  }
+
+});
+// ================= SUMMARY =================
+
+bot.onText(/\/summary (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const text = match[1];
+
+  bot.sendMessage(chatId,
+'📝 Summarizing...');
+
+  try {
+
+    const response = await axios.post(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'user',
+            content: `Summarize this:\n\n${text}`
+          }
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${GROQ_API_KEY}`
+        }
+      }
+    );
+
+    bot.sendMessage(
+      chatId,
+      response.data.choices[0].message.content
+    );
+
+  } catch (error) {
+
+    bot.sendMessage(chatId,
+'❌ Summary failed.');
+  }
+
+});
+
 
