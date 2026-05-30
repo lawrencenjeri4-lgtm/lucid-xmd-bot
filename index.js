@@ -5,9 +5,13 @@ const translate = require('@vitalets/google-translate-api');
 const startTime = Date.now();
 const fs = require('fs');
 const path = require('path');
+
 const ytdl = require('@distube/ytdl-core');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 const express = require("express");
@@ -923,17 +927,14 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
         const search = await yts(query);
 
         if (!search.videos.length) {
-            return bot.sendMessage(chatId,
-'❌ Song not found.');
+            return bot.sendMessage(chatId, '❌ Song not found.');
         }
 
         const video = search.videos[0];
 
         const title = video.title;
-        const ytUrl = video.url;
-        const duration = video.timestamp;
-        const views = video.views;
         const artist = video.author.name;
+        const duration = video.timestamp;
         const thumbnail = video.thumbnail;
 
         await bot.sendPhoto(chatId, thumbnail, {
@@ -942,30 +943,19 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
 
 📌 Title: ${title}
 ⏱ Duration: ${duration}
-👀 Views: ${views}
 👤 Artist: ${artist}
 
-⬇ Downloading audio...`
+⬇ Preparing audio...`
         });
 
-        const filePath = path.join(
-            __dirname,
-            `${Date.now()}.mp3`
-        );
-
-        await youtubedl(ytUrl, {
-            extractAudio: true,
-            audioFormat: 'mp3',
-            output: filePath,
-            noCheckCertificates: true,
-            preferFreeFormats: true,
-            youtubeSkipDashManifest: true,
-            addHeader: [
-                'User-Agent: Mozilla/5.0'
-            ]
+        const stream = ytdl(video.url, {
+            filter: "audioonly",
+            quality: "highestaudio"
         });
 
-        await bot.sendAudio(chatId, filePath, {
+        await bot.sendAudio(chatId, stream, {
+            title: title,
+            performer: artist,
             caption:
 `🎧 Now Playing
 
@@ -973,19 +963,15 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
 👤 ${artist}`
         });
 
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-
     } catch (error) {
 
         console.error("PLAY ERROR:", error);
 
         bot.sendMessage(
             chatId,
-`❌ Failed to download song.
+            `❌ Failed to play song.
 
-${error.message || 'Unknown error'}`
+${error.message}`
         );
     }
 });
