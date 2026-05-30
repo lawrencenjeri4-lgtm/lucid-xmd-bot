@@ -949,9 +949,10 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
         });
 
         const stream = ytdl(video.url, {
-            filter: "audioonly",
-            quality: "highestaudio"
-        });
+    filter: "audioonly",
+    quality: "lowestaudio",
+    highWaterMark: 1 << 25
+});
 
         await bot.sendAudio(chatId, stream, {
             title: title,
