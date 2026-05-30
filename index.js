@@ -5,7 +5,11 @@ const translate = require('@vitalets/google-translate-api');
 const startTime = Date.now();
 const fs = require('fs');
 const path = require('path');
-const youtubedl = require('yt-dlp-exec');
+const ytdl = require('@distube/ytdl-core');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+
+ffmpeg.setFfmpegPath(ffmpegPath);
 const express = require("express");
 
 const app = express();
