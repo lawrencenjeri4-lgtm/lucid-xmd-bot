@@ -1051,3 +1051,83 @@ bot.onText(/\/stats/, (msg) => {
 ⏳ Uptime: ${Math.floor(uptime)} seconds`
   );
 });
+// ================= RPS =================
+
+bot.onText(/\/rps (rock|paper|scissors)/i, (msg, match) => {
+
+  const choices = ["rock", "paper", "scissors"];
+  const botChoice =
+    choices[Math.floor(Math.random() * choices.length)];
+
+  const userChoice = match[1].toLowerCase();
+
+  let result = "🤝 Draw";
+
+  if (
+    (userChoice === "rock" && botChoice === "scissors") ||
+    (userChoice === "paper" && botChoice === "rock") ||
+    (userChoice === "scissors" && botChoice === "paper")
+  ) {
+    result = "🎉 You Win!";
+  } else if (userChoice !== botChoice) {
+    result = "😅 Bot Wins!";
+  }
+
+  bot.sendMessage(
+    msg.chat.id,
+`🎮 Rock Paper Scissors
+
+👤 You: ${userChoice}
+🤖 Bot: ${botChoice}
+
+${result}`
+  );
+});
+// ================= SHORTURL =================
+
+bot.onText(/\/shorturl (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const url = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`
+    );
+
+    bot.sendMessage(chatId,
+`🔗 URL SHORTENER
+
+🌐 Original:
+${url}
+
+✂️ Short:
+${response.data}`);
+
+  } catch (error) {
+
+    bot.sendMessage(chatId,
+'❌ Failed to shorten URL.');
+
+  }
+});
+// ================= QR =================
+
+bot.onText(/\/qr (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+  const text = match[1];
+
+  const qr =
+`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(text)}`;
+
+  bot.sendPhoto(chatId, qr, {
+    caption:
+`📱 QR Code Generated
+
+📝 Data:
+${text}`
+  });
+
+});
