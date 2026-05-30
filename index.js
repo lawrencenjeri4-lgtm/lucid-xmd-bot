@@ -1496,6 +1496,136 @@ bot.onText(/\/roast/, (msg) => {
   );
 
 });
+// ================= CRYPTO =================
+
+bot.onText(/\/crypto (.+)/, async (msg, match) => {
+
+  const coin = match[1].toLowerCase();
+
+  try {
+
+    const response = await axios.get(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=usd`
+    );
+
+    const price = response.data[coin]?.usd;
+
+    if (!price) {
+      return bot.sendMessage(
+        msg.chat.id,
+        '❌ Coin not found.'
+      );
+    }
+
+    bot.sendMessage(
+      msg.chat.id,
+      `💰 ${coin.toUpperCase()}\n\nPrice: $${price}`
+    );
+
+  } catch {
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Failed to fetch crypto price.'
+    );
+
+  }
+
+});
+// ================= CURRENCY =================
+
+bot.onText(/\/currency (.+)/, async (msg, match) => {
+
+  const amount = parseFloat(match[1]);
+
+  try {
+
+    const response = await axios.get(
+      'https://open.er-api.com/v6/latest/USD'
+    );
+
+    const kes =
+      (amount * response.data.rates.KES).toFixed(2);
+
+    bot.sendMessage(
+      msg.chat.id,
+      `💱 Currency Converter\n\n$${amount} = KES ${kes}`
+    );
+
+  } catch {
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Conversion failed.'
+    );
+
+  }
+
+});
+// ================= DEFINE =================
+
+bot.onText(/\/define (.+)/, async (msg, match) => {
+
+  const word = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+    );
+
+    const meaning =
+      response.data[0].meanings[0].definitions[0].definition;
+
+    bot.sendMessage(
+      msg.chat.id,
+      `📖 ${word}\n\n${meaning}`
+    );
+
+  } catch {
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Word not found.'
+    );
+
+  }
+
+});
+// ================= GITHUB =================
+
+bot.onText(/\/github (.+)/, async (msg, match) => {
+
+  const username = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `https://api.github.com/users/${username}`
+    );
+
+    const user = response.data;
+
+    bot.sendMessage(
+      msg.chat.id,
+`🐙 GitHub Profile
+
+👤 ${user.login}
+📚 Repos: ${user.public_repos}
+👥 Followers: ${user.followers}
+🔗 ${user.html_url}`
+    );
+
+  } catch {
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ GitHub user not found.'
+    );
+
+  }
+
+});
 
 
 
