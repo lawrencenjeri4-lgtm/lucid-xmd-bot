@@ -1500,28 +1500,40 @@ bot.onText(/\/roast/, (msg) => {
 
 bot.onText(/\/crypto (.+)/, async (msg, match) => {
 
-    const coin = match[1].toUpperCase();
+    const coin = match[1].toLowerCase();
 
     try {
 
-        const url =
-            `https://api.binance.com/api/v3/ticker/price?symbol=${coin}USDT`;
+        const response = await axios.get(
+            `https://api.coincap.io/v2/assets/${coin}`
+        );
 
-        const response = await axios.get(url);
+        const data = response.data.data;
 
         bot.sendMessage(
             msg.chat.id,
-            `💰 ${coin}\n\nPrice: $${response.data.price}`
+`💰 CRYPTO PRICE
+
+🪙 Coin: ${data.name}
+🔖 Symbol: ${data.symbol}
+💵 Price: $${parseFloat(data.priceUsd).toFixed(4)}
+
+📈 Source: CoinCap`
         );
 
     } catch (error) {
 
-        console.log("CRYPTO FULL ERROR:");
-        console.log(error.response?.data || error.message);
+        console.log("CRYPTO ERROR:", error.response?.data || error.message);
 
         bot.sendMessage(
             msg.chat.id,
-            `❌ Error:\n${JSON.stringify(error.response?.data || error.message)}`
+`❌ Coin not found.
+
+Examples:
+/crypto bitcoin
+/crypto ethereum
+/crypto solana
+/crypto ripple`
         );
 
     }
