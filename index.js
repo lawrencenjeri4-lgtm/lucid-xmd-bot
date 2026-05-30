@@ -1910,3 +1910,126 @@ ${data.lat}, ${data.lon}`
   }
 
 });
+// ================= CAT FACT =================
+
+bot.onText(/\/catfact/, async (msg) => {
+
+  try {
+
+    const response = await axios.get(
+      "https://catfact.ninja/fact"
+    );
+
+    bot.sendMessage(
+      msg.chat.id,
+`🐱 CAT FACT
+
+${response.data.fact}`
+    );
+
+  } catch (error) {
+
+    console.log(
+      "CATFACT ERROR:",
+      error.response?.data || error.message
+    );
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Failed to fetch cat fact."
+    );
+
+  }
+
+});
+// ================= DOG =================
+
+bot.onText(/\/dog/, async (msg) => {
+
+  try {
+
+    const response = await axios.get(
+      "https://dog.ceo/api/breeds/image/random"
+    );
+
+    await bot.sendPhoto(
+      msg.chat.id,
+      response.data.message,
+      {
+        caption: "🐶 Random Dog"
+      }
+    );
+
+  } catch (error) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Failed to fetch dog image."
+    );
+
+  }
+
+});
+// ================= REPO =================
+
+bot.onText(/\/repo (.+)/, async (msg, match) => {
+
+  const repo = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `https://api.github.com/repos/${repo}`
+    );
+
+    const data = response.data;
+
+    bot.sendMessage(
+      msg.chat.id,
+`📂 GitHub Repository
+
+📌 Name: ${data.full_name}
+
+⭐ Stars: ${data.stargazers_count}
+
+🍴 Forks: ${data.forks_count}
+
+📝 Description:
+${data.description || "No description"}
+
+🔗 ${data.html_url}`
+    );
+
+  } catch {
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Repository not found."
+    );
+
+  }
+
+});
+// ================= STATUS =================
+
+bot.onText(/\/status (.+)/, async (msg, match) => {
+
+  try {
+
+    const response = await axios.get(match[1]);
+
+    bot.sendMessage(
+      msg.chat.id,
+      `🌐 Website Status\n\n✅ Online\nStatus: ${response.status}`
+    );
+
+  } catch (error) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      `❌ Website Offline\n\nStatus: ${error.response?.status || "Unknown"}`
+    );
+
+  }
+
+});
