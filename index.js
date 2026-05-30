@@ -12,8 +12,6 @@ const ffmpegPath = require('ffmpeg-static');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-
-ffmpeg.setFfmpegPath(ffmpegPath);
 const express = require("express");
 
 const app = express();
@@ -1285,50 +1283,57 @@ bot.onText(/\/unban (.+)/, (msg, match) => {
 
 bot.onText(/\/code (.+)/, async (msg, match) => {
 
-  const chatId = msg.chat.id;
-  const prompt = match[1];
+    const chatId = msg.chat.id;
+    const prompt = match[1];
 
-  bot.sendMessage(chatId,
-'💻 Generating code...');
+    await bot.sendMessage(chatId,
+    '💻 Generating code...');
 
-  try {
+    try {
 
-    const response = await axios.post(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert programmer. Return only code with brief explanation.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+        const response = await axios.post(
+            'https://api.groq.com/openai/v1/chat/completions',
+            {
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are an expert programmer.'
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ]
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${GROQ_API_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
 
-    bot.sendMessage(
-      chatId,
-      response.data.choices[0].message.content
-    );
+        const reply =
+        response.data.choices[0].message.content;
 
-  } catch (error) {
+        bot.sendMessage(chatId, reply);
 
-    bot.sendMessage(
-      chatId,
-      '❌ Failed to generate code.'
-    );
+    } catch (error) {
 
-  }
+        console.log(
+            error.response?.data || error.message
+        );
+
+        bot.sendMessage(
+            chatId,
+            `❌ Code generation failed.\n\n${
+                error.response?.data?.error?.message ||
+                error.message
+            }`
+        );
+
+    }
 
 });
 // ================= EXPLAIN =================
