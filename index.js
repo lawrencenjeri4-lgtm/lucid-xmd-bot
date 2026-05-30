@@ -953,14 +953,15 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
 
         // Delete file after sending
         fs.unlinkSync(filePath);
+} catch (error) {
 
-    } catch (error) {
+    console.error("PLAY ERROR:", error);
 
-        console.log(error);
+    bot.sendMessage(
+        chatId,
+        `❌ Failed to download song.
 
-        bot.sendMessage(chatId,
-'❌ Failed to download song.');
+${error.message || 'Unknown error'}`
+    );
 
     }
-
-});
