@@ -1855,4 +1855,58 @@ ${pkg.description || "No description"}
   }
 
 });
+// ================= IP LOOKUP =================
 
+bot.onText(/\/ip (.+)/, async (msg, match) => {
+
+  const ip = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `http://ip-api.com/json/${ip}`
+    );
+
+    const data = response.data;
+
+    if (data.status !== "success") {
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ Invalid IP address."
+      );
+    }
+
+    bot.sendMessage(
+      msg.chat.id,
+`🌍 IP INFORMATION
+
+🔢 IP: ${data.query}
+
+🌎 Country: ${data.country}
+🏙 City: ${data.city}
+
+📍 Region: ${data.regionName}
+
+📡 ISP: ${data.isp}
+
+🕒 Timezone: ${data.timezone}
+
+📌 Coordinates:
+${data.lat}, ${data.lon}`
+    );
+
+  } catch (error) {
+
+    console.log(
+      "IP ERROR:",
+      error.response?.data || error.message
+    );
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Failed to lookup IP."
+    );
+
+  }
+
+});
