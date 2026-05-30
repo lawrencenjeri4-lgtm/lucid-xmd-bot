@@ -1626,10 +1626,11 @@ bot.onText(/\/github (.+)/, async (msg, match) => {
 
 });
 // ================= WIKI =================
-
 bot.onText(/\/wiki (.+)/, async (msg, match) => {
 
     const query = match[1];
+
+    bot.sendMessage(msg.chat.id, "🔍 Searching Wikipedia...");
 
     try {
 
@@ -1637,24 +1638,21 @@ bot.onText(/\/wiki (.+)/, async (msg, match) => {
             `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`
         );
 
-        const data = response.data;
+        console.log("WIKI SUCCESS");
 
         bot.sendMessage(
             msg.chat.id,
-`📚 Wikipedia
-
-📖 ${data.title}
-
-${data.extract}
-
-🔗 ${data.content_urls.desktop.page}`
+            response.data.extract || "No summary found."
         );
 
     } catch (error) {
 
+        console.log("WIKI ERROR");
+        console.log(error.message);
+
         bot.sendMessage(
             msg.chat.id,
-            '❌ Topic not found.'
+            `❌ Error: ${error.message}`
         );
 
     }
