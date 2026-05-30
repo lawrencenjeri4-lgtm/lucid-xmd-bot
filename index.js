@@ -1808,5 +1808,51 @@ ${anime.synopsis?.slice(0, 500) || 'No synopsis available.'}`
   }
 
 });
+// ================= NPM =================
 
+bot.onText(/\/npm (.+)/, async (msg, match) => {
+
+  const packageName = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `https://registry.npmjs.org/${packageName}`
+    );
+
+    const pkg = response.data;
+
+    bot.sendMessage(
+      msg.chat.id,
+`📦 NPM PACKAGE
+
+📌 Name: ${pkg.name}
+
+🏷 Version: ${pkg["dist-tags"].latest}
+
+👤 Author: ${
+  pkg.author?.name || "Unknown"
+}
+
+📝 Description:
+${pkg.description || "No description"}
+
+🔗 https://www.npmjs.com/package/${pkg.name}`
+    );
+
+  } catch (error) {
+
+    console.log(
+      "NPM ERROR:",
+      error.response?.data || error.message
+    );
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Package not found."
+    );
+
+  }
+
+});
 
