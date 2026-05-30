@@ -1500,33 +1500,45 @@ bot.onText(/\/roast/, (msg) => {
 
 bot.onText(/\/crypto (.+)/, async (msg, match) => {
 
-    const coin = match[1].toLowerCase();
+    const coin = match[1].toUpperCase();
 
     try {
 
         const response = await axios.get(
-            `https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=usd`
+            `https://api.binance.com/api/v3/ticker/price?symbol=${coin}USDT`
         );
 
-        console.log(response.data);
+        const price = response.data.price;
 
         bot.sendMessage(
             msg.chat.id,
-            JSON.stringify(response.data, null, 2)
+`💰 CRYPTO PRICE
+
+🪙 Coin: ${coin}
+💵 Price: $${price}
+
+📈 Source: Binance`
         );
 
     } catch (error) {
 
-        console.log("CRYPTO ERROR:");
-        console.log(error.response?.data);
-        console.log(error.message);
+        console.log("CRYPTO ERROR:", error.response?.data || error.message);
 
         bot.sendMessage(
             msg.chat.id,
-            `❌ ${error.message}`
+`❌ Coin not found.
+
+Examples:
+/crypto BTC
+/crypto ETH
+/crypto SOL
+/crypto XRP`
         );
+
     }
+
 });
+
 // ================= CURRENCY =================
 
 bot.onText(/\/currency (.+)/, async (msg, match) => {
