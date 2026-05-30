@@ -976,3 +976,78 @@ ${error.message}`
         );
     }
 });
+// ================= ROLL =================
+
+bot.onText(/\/roll/, (msg) => {
+  const number = Math.floor(Math.random() * 6) + 1;
+
+  bot.sendMessage(
+    msg.chat.id,
+    `🎲 Dice Roll\n\nYou rolled: ${number}`
+  );
+});
+// ================= 8BALL =================
+
+bot.onText(/\/8ball (.+)/, (msg, match) => {
+
+  const answers = [
+    "✅ Yes",
+    "❌ No",
+    "🤔 Maybe",
+    "🔥 Definitely",
+    "⏳ Ask again later",
+    "😅 Uncertain"
+  ];
+
+  const reply =
+    answers[Math.floor(Math.random() * answers.length)];
+
+  bot.sendMessage(
+    msg.chat.id,
+    `🎱 Magic 8 Ball\n\n❓ ${match[1]}\n\n${reply}`
+  );
+});
+// ================= PASSWORD =================
+
+bot.onText(/\/password/, (msg) => {
+
+  const password =
+    Math.random().toString(36).slice(-12);
+
+  bot.sendMessage(
+    msg.chat.id,
+    `🔐 Generated Password\n\n${password}`
+  );
+});
+// ================= HACK =================
+
+bot.onText(/\/hack (.+)/, (msg, match) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`💻 HACKING TARGET...
+
+🎯 Target: ${match[1]}
+
+▓▓▓▓▓▓▓▓▓▓ 100%
+
+✅ Access Granted
+
+😂 Just kidding!`
+  );
+});
+// ================= STATS =================
+
+bot.onText(/\/stats/, (msg) => {
+
+  const uptime = process.uptime();
+
+  bot.sendMessage(
+    msg.chat.id,
+`📊 LUCID XMD STATS
+
+🤖 Status: Online
+⚡ Commands: 25+
+⏳ Uptime: ${Math.floor(uptime)} seconds`
+  );
+});
