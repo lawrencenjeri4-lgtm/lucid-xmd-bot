@@ -1500,37 +1500,57 @@ bot.onText(/\/roast/, (msg) => {
 
 bot.onText(/\/crypto (.+)/, async (msg, match) => {
 
-  const coin = match[1].toLowerCase();
+    const input = match[1].toLowerCase();
 
-  try {
+    const coins = {
+        btc: "bitcoin",
+        bitcoin: "bitcoin",
+        eth: "ethereum",
+        ethereum: "ethereum",
+        sol: "solana",
+        solana: "solana",
+        doge: "dogecoin",
+        dogecoin: "dogecoin",
+        xrp: "ripple",
+        ripple: "ripple",
+        bnb: "binancecoin",
+        ada: "cardano"
+    };
 
-    const response = await axios.get(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=usd`
-    );
+    const coin = coins[input] || input;
 
-    const price = response.data[coin]?.usd;
+    try {
 
-    if (!price) {
-      return bot.sendMessage(
-        msg.chat.id,
-        '❌ Coin not found.'
-      );
+        const response = await axios.get(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=usd`
+        );
+
+        const price = response.data[coin]?.usd;
+
+        if (!price) {
+            return bot.sendMessage(
+                msg.chat.id,
+                "❌ Coin not found."
+            );
+        }
+
+        bot.sendMessage(
+            msg.chat.id,
+`💰 CRYPTO PRICE
+
+🪙 Coin: ${coin.toUpperCase()}
+💵 Price: $${price}`
+        );
+
+    } catch (error) {
+
+        console.log(error.message);
+
+        bot.sendMessage(
+            msg.chat.id,
+            "❌ Failed to fetch crypto price."
+        );
     }
-
-    bot.sendMessage(
-      msg.chat.id,
-      `💰 ${coin.toUpperCase()}\n\nPrice: $${price}`
-    );
-
-  } catch {
-
-    bot.sendMessage(
-      msg.chat.id,
-      '❌ Failed to fetch crypto price.'
-    );
-
-  }
-
 });
 // ================= CURRENCY =================
 
