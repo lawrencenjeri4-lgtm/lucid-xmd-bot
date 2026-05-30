@@ -1420,5 +1420,82 @@ bot.onText(/\/summary (.+)/, async (msg, match) => {
   }
 
 });
+// ================= TEMPMAIL =================
+
+bot.onText(/\/tempmail/, async (msg) => {
+
+  const random =
+    Math.random().toString(36).substring(2, 10);
+
+  bot.sendMessage(
+    msg.chat.id,
+`📧 Temporary Email
+
+${random}@lucidmail.com
+
+⚠️ Demo version`
+  );
+
+});
+// ================= ADVICE =================
+
+bot.onText(/\/advice/, (msg) => {
+
+  const advice = [
+    "Stay consistent.",
+    "Learn something every day.",
+    "Focus on progress, not perfection.",
+    "Invest in your skills.",
+    "Don't quit too early."
+  ];
+
+  const random =
+    advice[Math.floor(Math.random() * advice.length)];
+
+  bot.sendMessage(
+    msg.chat.id,
+    `💡 Advice\n\n${random}`
+  );
+
+});
+// ================= TRIVIA =================
+
+bot.onText(/\/trivia/, (msg) => {
+
+  const questions = [
+    "🌍 What is the capital of Kenya?\nAnswer: Nairobi",
+    "🐘 What is the largest land animal?\nAnswer: Elephant",
+    "☀️ What star is at the center of our solar system?\nAnswer: Sun"
+  ];
+
+  const random =
+    questions[Math.floor(Math.random() * questions.length)];
+
+  bot.sendMessage(
+    msg.chat.id,
+    `🧠 Trivia\n\n${random}`
+  );
+
+});
+// ================= ROAST =================
+
+bot.onText(/\/roast/, (msg) => {
+
+  const roasts = [
+    "😂 You're running on low battery and high confidence.",
+    "😂 Your WiFi is faster than your decision making.",
+    "😂 Even my calculator is confused by you."
+  ];
+
+  const random =
+    roasts[Math.floor(Math.random() * roasts.length)];
+
+  bot.sendMessage(
+    msg.chat.id,
+    random
+  );
+
+});
+
 
 
