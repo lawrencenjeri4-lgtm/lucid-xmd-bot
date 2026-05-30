@@ -1683,7 +1683,7 @@ bot.onText(/\/movie (.+)/, async (msg, match) => {
     try {
 
         const response = await axios.get(
-            `https://www.omdbapi.com/?t=${encodeURIComponent(movie)}&apikey=564727fa`
+            `https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&t=${encodeURIComponent(movie)}`
         );
 
         const data = response.data;
@@ -1697,9 +1697,9 @@ bot.onText(/\/movie (.+)/, async (msg, match) => {
 
         bot.sendMessage(
             msg.chat.id,
-`🎬 MOVIE INFO
+`🎬 Movie Information
 
-🎥 Title: ${data.Title}
+📌 Title: ${data.Title}
 📅 Year: ${data.Year}
 ⭐ Rating: ${data.imdbRating}
 🎭 Genre: ${data.Genre}
@@ -1711,13 +1711,16 @@ ${data.Plot}`
 
     } catch (error) {
 
+        console.log(
+            "MOVIE ERROR:",
+            error.response?.data || error.message
+        );
+
         bot.sendMessage(
             msg.chat.id,
             "❌ Failed to fetch movie."
         );
-
     }
-
 });
 // ================= LYRICS =================
 
