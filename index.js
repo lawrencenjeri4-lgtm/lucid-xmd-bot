@@ -1626,33 +1626,49 @@ bot.onText(/\/github (.+)/, async (msg, match) => {
 
 });
 // ================= WIKI =================
+
 bot.onText(/\/wiki (.+)/, async (msg, match) => {
 
     const query = match[1];
 
-    bot.sendMessage(msg.chat.id, "🔍 Searching Wikipedia...");
-
     try {
 
         const response = await axios.get(
-            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`
+            `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=1&namespace=0&format=json`,
+            {
+                headers: {
+                    'User-Agent': 'Lucid-XMD-Bot'
+                }
+            }
         );
 
-        console.log("WIKI SUCCESS");
+        const result = response.data;
+
+        if (!result[1].length) {
+            return bot.sendMessage(
+                msg.chat.id,
+                '❌ Topic not found.'
+            );
+        }
 
         bot.sendMessage(
             msg.chat.id,
-            response.data.extract || "No summary found."
+`📚 Wikipedia
+
+📖 ${result[1][0]}
+
+📝 ${result[2][0]}
+
+🔗 ${result[3][0]}`
         );
 
     } catch (error) {
 
-        console.log("WIKI ERROR");
-        console.log(error.message);
+        console.log("WIKI ERROR:", error.message);
 
         bot.sendMessage(
             msg.chat.id,
-            `❌ Error: ${error.message}`
+            '❌ Failed to fetch Wikipedia data.'
         );
 
     }
