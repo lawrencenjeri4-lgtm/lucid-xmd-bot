@@ -1131,3 +1131,95 @@ ${text}`
   });
 
 });
+// ================= WARN =================
+
+bot.onText(/\/warn (.+)/, (msg, match) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`⚠️ WARNING ISSUED
+
+👤 User: ${match[1]}
+
+Please follow group rules.`
+  );
+});
+// ================= KICK =================
+
+bot.onText(/\/kick (.+)/, (msg, match) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`👮 Kick Command
+
+Target:
+${match[1]}
+
+⚠️ Full admin kick system coming soon.`
+  );
+});
+// ================= MUTE =================
+
+bot.onText(/\/mute (.+)/, (msg, match) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`🔇 User Muted
+
+👤 ${match[1]}
+
+⏳ Until an admin unmutes them.`
+  );
+});
+// ================= UNMUTE =================
+
+bot.onText(/\/unmute (.+)/, (msg, match) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`🔊 User Unmuted
+
+👤 ${match[1]}`
+  );
+});
+// ================= ID =================
+
+bot.onText(/\/id/, async (msg) => {
+
+  bot.sendMessage(
+    msg.chat.id,
+`🆔 INFORMATION
+
+👤 User ID: ${msg.from.id}
+💬 Chat ID: ${msg.chat.id}
+📛 Name: ${msg.from.first_name}`
+  );
+
+});
+// ================= GROUPINFO =================
+
+bot.onText(/\/groupinfo/, async (msg) => {
+
+  try {
+
+    const chat = await bot.getChat(msg.chat.id);
+
+    bot.sendMessage(
+      msg.chat.id,
+`👥 GROUP INFO
+
+📛 Name: ${chat.title || "Private Chat"}
+🆔 ID: ${chat.id}
+📌 Type: ${chat.type}`
+    );
+
+  } catch (error) {
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Failed to get group info.'
+    );
+
+  }
+
+});
