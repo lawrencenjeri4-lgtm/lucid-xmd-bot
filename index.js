@@ -1625,6 +1625,115 @@ bot.onText(/\/github (.+)/, async (msg, match) => {
   }
 
 });
+// ================= WIKI =================
+
+bot.onText(/\/wiki (.+)/, async (msg, match) => {
+
+    const query = match[1];
+
+    try {
+
+        const response = await axios.get(
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`
+        );
+
+        const data = response.data;
+
+        bot.sendMessage(
+            msg.chat.id,
+`📚 Wikipedia
+
+📖 ${data.title}
+
+${data.extract}
+
+🔗 ${data.content_urls.desktop.page}`
+        );
+
+    } catch (error) {
+
+        bot.sendMessage(
+            msg.chat.id,
+            '❌ Topic not found.'
+        );
+
+    }
+
+});
+// ================= MOVIE =================
+
+bot.onText(/\/movie (.+)/, async (msg, match) => {
+
+    const movie = match[1];
+
+    try {
+
+        const response = await axios.get(
+            `https://www.omdbapi.com/?t=${encodeURIComponent(movie)}&apikey=564727fa`
+        );
+
+        const data = response.data;
+
+        if (data.Response === "False") {
+            return bot.sendMessage(
+                msg.chat.id,
+                "❌ Movie not found."
+            );
+        }
+
+        bot.sendMessage(
+            msg.chat.id,
+`🎬 MOVIE INFO
+
+🎥 Title: ${data.Title}
+📅 Year: ${data.Year}
+⭐ Rating: ${data.imdbRating}
+🎭 Genre: ${data.Genre}
+🎬 Director: ${data.Director}
+
+📝 Plot:
+${data.Plot}`
+        );
+
+    } catch (error) {
+
+        bot.sendMessage(
+            msg.chat.id,
+            "❌ Failed to fetch movie."
+        );
+
+    }
+
+});
+// ================= LYRICS =================
+
+bot.onText(/\/lyrics (.+)/, async (msg, match) => {
+
+    const song = match[1];
+
+    try {
+
+        const response = await axios.get(
+            `https://api.lyrics.ovh/v1/Coldplay/${encodeURIComponent(song)}`
+        );
+
+        bot.sendMessage(
+            msg.chat.id,
+`🎵 Lyrics
+
+${response.data.lyrics.substring(0, 3500)}`
+        );
+
+    } catch (error) {
+
+        bot.sendMessage(
+            msg.chat.id,
+            "❌ Lyrics not found."
+        );
+
+    }
+
+});
 
 
 
