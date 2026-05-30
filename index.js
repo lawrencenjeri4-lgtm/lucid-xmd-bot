@@ -6,6 +6,18 @@ const startTime = Date.now();
 const fs = require('fs');
 const path = require('path');
 const youtubedl = require('yt-dlp-exec');
+const express = require("express");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+    res.send("Lucid XMD Bot Running");
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 const token = process.env.BOT_TOKEN;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
