@@ -899,7 +899,7 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
 
     try {
 
-        bot.sendMessage(chatId,
+        await bot.sendMessage(chatId,
 `🔍 Searching song...
 
 🎵 Query: ${query}`);
@@ -932,17 +932,23 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
 ⬇ Downloading audio...`
         });
 
-        // File path
-        const filePath = path.join(__dirname, `${Date.now()}.mp3`);
+        const filePath = path.join(
+            __dirname,
+            `${Date.now()}.mp3`
+        );
 
-        // Download audio
         await youtubedl(ytUrl, {
             extractAudio: true,
             audioFormat: 'mp3',
-            output: filePath
+            output: filePath,
+            noCheckCertificates: true,
+            preferFreeFormats: true,
+            youtubeSkipDashManifest: true,
+            addHeader: [
+                'User-Agent: Mozilla/5.0'
+            ]
         });
 
-        // Send audio
         await bot.sendAudio(chatId, filePath, {
             caption:
 `🎧 Now Playing
@@ -951,18 +957,19 @@ bot.onText(/\/(play|song) (.+)/, async (msg, match) => {
 👤 ${artist}`
         });
 
-        // Delete file after sending
-        fs.unlinkSync(filePath);
-} catch (error) {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
 
-    console.error("PLAY ERROR:", error);
+    } catch (error) {
 
-    bot.sendMessage(
-        chatId,
-        `❌ Failed to download song.
+        console.error("PLAY ERROR:", error);
+
+        bot.sendMessage(
+            chatId,
+`❌ Failed to download song.
 
 ${error.message || 'Unknown error'}`
-    );
-
+        );
     }
 });
