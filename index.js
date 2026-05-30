@@ -1500,39 +1500,35 @@ bot.onText(/\/roast/, (msg) => {
 
 bot.onText(/\/crypto (.+)/, async (msg, match) => {
 
-    const input = match[1].toLowerCase();
-
-    const coins = {
-        btc: "bitcoin",
-        bitcoin: "bitcoin",
-        eth: "ethereum",
-        ethereum: "ethereum",
-        sol: "solana",
-        solana: "solana",
-        doge: "dogecoin",
-        dogecoin: "dogecoin",
-        xrp: "ripple",
-        ripple: "ripple",
-        bnb: "binancecoin",
-        ada: "cardano"
-    };
-
-    const coin = coins[input] || input;
+    const coin = match[1].toLowerCase().trim();
 
     try {
 
         const response = await axios.get(
-            `https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=usd`
+            `https://api.coingecko.com/api/v3/simple/price`,
+            {
+                params: {
+                    ids: coin,
+                    vs_currencies: "usd"
+                },
+                headers: {
+                    "User-Agent": "Lucid-XMD"
+                }
+            }
         );
 
-        const price = response.data[coin]?.usd;
-
-        if (!price) {
+        if (
+            !response.data ||
+            !response.data[coin] ||
+            !response.data[coin].usd
+        ) {
             return bot.sendMessage(
                 msg.chat.id,
-                "❌ Coin not found."
+                "❌ Coin not found.\n\nExample:\n/crypto bitcoin"
             );
         }
+
+        const price = response.data[coin].usd;
 
         bot.sendMessage(
             msg.chat.id,
@@ -1544,7 +1540,7 @@ bot.onText(/\/crypto (.+)/, async (msg, match) => {
 
     } catch (error) {
 
-        console.log(error.message);
+        console.log(error.response?.data || error.message);
 
         bot.sendMessage(
             msg.chat.id,
