@@ -2627,3 +2627,36 @@ ${decodeURIComponent(text)}
   );
 
 });
+// ================= SCREENSHOT =================
+
+bot.onText(/\/ss (.+)/, async (msg, match) => {
+
+  const website = match[1];
+
+  try {
+
+    const screenshotUrl =
+      `https://api.screenshotone.com/take?access_key=${process.env.SCREENSHOT_API_KEY}&url=https://${website}&full_page=true`;
+
+    await bot.sendPhoto(
+      msg.chat.id,
+      screenshotUrl,
+      {
+        caption: `🌐 Screenshot of ${website}`
+      }
+    );
+
+  } catch (error) {
+
+    console.log(
+      error.response?.data || error.message
+    );
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Failed to capture screenshot.'
+    );
+
+  }
+
+});
