@@ -2249,3 +2249,58 @@ bot.onText(/\/poll (.+)/, async (msg, match) => {
   }
 
 });
+// ================= WHOIS =================
+
+bot.onText(/\/whois (.+)/, async (msg, match) => {
+
+  const domain = match[1]
+    .replace("https://", "")
+    .replace("http://", "")
+    .split("/")[0];
+
+  try {
+
+    const response = await axios.get(
+      `https://api.api-ninjas.com/v1/whois?domain=${domain}`,
+      {
+        headers: {
+          'X-Api-Key': process.env.NINJAS_API_KEY
+        }
+      }
+    );
+
+    const data = response.data;
+
+    bot.sendMessage(
+      msg.chat.id,
+`💻 DOMAIN INFORMATION
+
+🌐 Domain: ${domain}
+
+📅 Created:
+${data.creation_date || 'Unknown'}
+
+📆 Updated:
+${data.updated_date || 'Unknown'}
+
+⏳ Expires:
+${data.expiration_date || 'Unknown'}
+
+🏢 Registrar:
+${data.registrar || 'Unknown'}`
+    );
+
+  } catch (error) {
+
+    console.log(
+      error.response?.data || error.message
+    );
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Failed to fetch domain information.'
+    );
+
+  }
+
+});
