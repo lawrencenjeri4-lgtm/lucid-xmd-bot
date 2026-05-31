@@ -2212,3 +2212,40 @@ bot.onText(/\/convert (\d+) ([A-Za-z]{3}) ([A-Za-z]{3})/, async (msg, match) => 
   }
 
 });
+// ================= POLL =================
+
+bot.onText(/\/poll (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+
+  const options = match[1]
+    .split("|")
+    .map(option => option.trim());
+
+  if (options.length < 2) {
+    return bot.sendMessage(
+      chatId,
+      "❌ Usage:\n/poll Option1|Option2"
+    );
+  }
+
+  try {
+
+    await bot.sendPoll(
+      chatId,
+      "📊 Lucid XMD Poll",
+      options
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to create poll."
+    );
+
+  }
+
+});
