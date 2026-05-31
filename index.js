@@ -2462,3 +2462,101 @@ ${reminder}`
   }, minutes * 60 * 1000);
 
 });
+// ================= NOTES =================
+
+const NOTES_FILE = "./notes.json";
+
+// Save Note
+bot.onText(/\/save (.+)/, async (msg, match) => {
+
+  const userId = msg.from.id;
+  const note = match[1];
+
+  let notes = {};
+
+  if (fs.existsSync(NOTES_FILE)) {
+    notes = JSON.parse(
+      fs.readFileSync(NOTES_FILE)
+    );
+  }
+
+  notes[userId] = note;
+
+  fs.writeFileSync(
+    NOTES_FILE,
+    JSON.stringify(notes, null, 2)
+  );
+
+  bot.sendMessage(
+    msg.chat.id,
+    "✅ Note saved successfully."
+  );
+
+});
+
+// View Note
+bot.onText(/\/mynote/, async (msg) => {
+
+  const userId = msg.from.id;
+
+  let notes = {};
+
+  if (fs.existsSync(NOTES_FILE)) {
+    notes = JSON.parse(
+      fs.readFileSync(NOTES_FILE)
+    );
+  }
+
+  if (!notes[userId]) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ You don't have any saved note."
+    );
+
+  }
+
+  bot.sendMessage(
+    msg.chat.id,
+`📝 YOUR SAVED NOTE
+
+${notes[userId]}`
+  );
+
+});
+
+// Delete Note
+bot.onText(/\/deletenote/, async (msg) => {
+
+  const userId = msg.from.id;
+
+  let notes = {};
+
+  if (fs.existsSync(NOTES_FILE)) {
+    notes = JSON.parse(
+      fs.readFileSync(NOTES_FILE)
+    );
+  }
+
+  if (!notes[userId]) {
+
+    return bot.sendMessage(
+      msg.chat.id,
+      "❌ No saved note found."
+    );
+
+  }
+
+  delete notes[userId];
+
+  fs.writeFileSync(
+    NOTES_FILE,
+    JSON.stringify(notes, null, 2)
+  );
+
+  bot.sendMessage(
+    msg.chat.id,
+    "🗑 Note deleted successfully."
+  );
+
+});
