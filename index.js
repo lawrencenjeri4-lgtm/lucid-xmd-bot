@@ -2033,3 +2033,50 @@ bot.onText(/\/status (.+)/, async (msg, match) => {
   }
 
 });
+// ================= FANCY FONT =================
+
+bot.onText(/\/fancy (.+)/, (msg, match) => {
+
+  const text = match[1];
+
+  const bold = text
+    .split("")
+    .map(c =>
+      String.fromCodePoint(
+        c >= "A" && c <= "Z"
+          ? c.charCodeAt(0) - 65 + 0x1D400
+          : c >= "a" && c <= "z"
+          ? c.charCodeAt(0) - 97 + 0x1D41A
+          : c.charCodeAt(0)
+      )
+    )
+    .join("");
+
+  const monospace = text
+    .split("")
+    .map(c =>
+      String.fromCodePoint(
+        c >= "A" && c <= "Z"
+          ? c.charCodeAt(0) - 65 + 0x1D670
+          : c >= "a" && c <= "z"
+          ? c.charCodeAt(0) - 97 + 0x1D68A
+          : c.charCodeAt(0)
+      )
+    )
+    .join("");
+
+  bot.sendMessage(
+    msg.chat.id,
+`🎨 FANCY FONTS
+
+📝 Original:
+${text}
+
+🔥 Bold:
+${bold}
+
+💻 Monospace:
+${monospace}`
+  );
+
+});
