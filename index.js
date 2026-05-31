@@ -1,3 +1,20 @@
+const { MongoClient } = require("mongodb");
+
+const client = new MongoClient(process.env.MONGODB_URI);
+
+let db;
+
+async function connectDB() {
+  try {
+    await client.connect();
+    db = client.db("LucidXMD");
+    console.log("✅ MongoDB Connected");
+  } catch (err) {
+    console.error("❌ MongoDB Error:", err);
+  }
+}
+
+connectDB();
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 const yts = require('yt-search');
