@@ -2358,46 +2358,63 @@ bot.onText(/\/phone (.+)/, async (msg, match) => {
 
 bot.onText(/\/team (.+)/, async (msg, match) => {
 
-  const team = match[1];
+  const teamName = match[1];
 
   try {
 
     const response = await axios.get(
-      `https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(team)}`
+      `https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(teamName)}`
     );
 
-    const data = response.data.teams;
+    const teams = response.data.teams;
 
-    if (!data || !data.length) {
+    if (!teams || teams.length === 0) {
+
       return bot.sendMessage(
         msg.chat.id,
         '❌ Team not found.'
       );
+
     }
 
-    const t = data[0];
+    // Try exact match first
+    let team = teams.find(
+      t => t.strTeam &&
+      t.strTeam.toLowerCase() === teamName.toLowerCase()
+    );
+
+    // If exact match not found, use first result
+    if (!team) {
+      team = teams[0];
+    }
 
     bot.sendMessage(
       msg.chat.id,
 `⚽ TEAM INFORMATION
 
-🏟 Name: ${t.strTeam}
+🏟 Name: ${team.strTeam}
 
-🌍 Country: ${t.strCountry}
+🌍 Country: ${team.strCountry}
 
-🏆 League: ${t.strLeague}
+🏆 League: ${team.strLeague}
 
-📅 Founded: ${t.intFormedYear}
+📅 Founded: ${team.intFormedYear || 'Unknown'}
 
-🏟 Stadium: ${t.strStadium}
+🏟 Stadium: ${team.strStadium || 'Unknown'}
+
+👥 Capacity: ${team.intStadiumCapacity || 'Unknown'}
 
 📝 Description:
-${(t.strDescriptionEN || "No description available").substring(0, 300)}...`
+
+${(team.strDescriptionEN || 'No description available.')
+.substring(0, 500)}...`
     );
 
   } catch (error) {
 
-    console.log(error.response?.data || error.message);
+    console.log(
+      error.response?.data || error.message
+    );
 
     bot.sendMessage(
       msg.chat.id,
