@@ -2631,12 +2631,22 @@ ${decodeURIComponent(text)}
 
 bot.onText(/\/ss (.+)/, async (msg, match) => {
 
-  const website = match[1];
+  let website = match[1].trim();
+
+  // Add https:// only if missing
+  if (
+    !website.startsWith("http://") &&
+    !website.startsWith("https://")
+  ) {
+    website = "https://" + website;
+  }
 
   try {
 
     const screenshotUrl =
-      `https://api.screenshotone.com/take?access_key=${process.env.SCREENSHOT_API_KEY}&url=https://${website}&full_page=true`;
+      `https://api.screenshotone.com/take?access_key=${process.env.SCREENSHOT_API_KEY}&url=${encodeURIComponent(website)}&format=jpg&full_page=true`;
+
+    console.log("SCREENSHOT URL:", screenshotUrl);
 
     await bot.sendPhoto(
       msg.chat.id,
@@ -2649,6 +2659,7 @@ bot.onText(/\/ss (.+)/, async (msg, match) => {
   } catch (error) {
 
     console.log(
+      "SCREENSHOT ERROR:",
       error.response?.data || error.message
     );
 
