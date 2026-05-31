@@ -2673,3 +2673,51 @@ bot.onText(/\/ss (.+)/, async (msg, match) => {
   }
 
 });
+// ================= ANTI-LINK =================
+
+bot.on('message', async (msg) => {
+
+  if (!msg.text) return;
+
+  const chatId = msg.chat.id;
+
+  // Ignore private chats
+  if (msg.chat.type === 'private') return;
+
+  const text = msg.text.toLowerCase();
+
+  if (
+    text.includes('http://') ||
+    text.includes('https://') ||
+    text.includes('t.me/')
+  ) {
+
+    try {
+
+      const admins =
+        await bot.getChatAdministrators(chatId);
+
+      const isAdmin =
+        admins.some(
+          admin => admin.user.id === msg.from.id
+        );
+
+      if (isAdmin) return;
+
+      await bot.deleteMessage(
+        chatId,
+        msg.message_id
+      );
+
+      bot.sendMessage(
+        chatId,
+        `🚫 Links are not allowed, ${msg.from.first_name}!`
+      );
+
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
+});
