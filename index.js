@@ -2515,104 +2515,126 @@ ${reminder}`
   }, minutes * 60 * 1000);
 
 });
-// ================= NOTES =================
-
-const NOTES_FILE = "./notes.json";
+// ================= NOTES (MongoDB) =================
 
 // Save Note
-bot.onText(/\/save (.+)/, async (msg, match) => {
+bot.onText(//save (.+)/, async (msg, match) => {
 
-  const userId = msg.from.id;
-  const note = match[1];
+try {
 
-  let notes = {};
+const userId = msg.from.id;
+const note = match[1];
 
-  if (fs.existsSync(NOTES_FILE)) {
-    notes = JSON.parse(
-      fs.readFileSync(NOTES_FILE)
-    );
-  }
+await db.collection("notes").updateOne(
+  { userId: userId },
+  {
+    $set: {
+      note: note,
+      updatedAt: new Date()
+    }
+  },
+  { upsert: true }
+);
 
-  notes[userId] = note;
+bot.sendMessage(
+  msg.chat.id,
+  "✅ Note saved successfully."
+);
 
-  fs.writeFileSync(
-    NOTES_FILE,
-    JSON.stringify(notes, null, 2)
-  );
+} catch (err) {
 
-  bot.sendMessage(
-    msg.chat.id,
-    "✅ Note saved successfully."
-  );
+console.error(err);
+
+bot.sendMessage(
+  msg.chat.id,
+  "❌ Failed to save note."
+);
+
+}
 
 });
 
 // View Note
-bot.onText(/\/mynote/, async (msg) => {
+bot.onText(//mynote/, async (msg) => {
 
-  const userId = msg.from.id;
+try {
 
-  let notes = {};
+const userId = msg.from.id;
 
-  if (fs.existsSync(NOTES_FILE)) {
-    notes = JSON.parse(
-      fs.readFileSync(NOTES_FILE)
-    );
-  }
+const data = await db
+  .collection("notes")
+  .findOne({ userId: userId });
 
-  if (!notes[userId]) {
+if (!data) {
 
-    return bot.sendMessage(
-      msg.chat.id,
-      "❌ You don't have any saved note."
-    );
-
-  }
-
-  bot.sendMessage(
+  return bot.sendMessage(
     msg.chat.id,
-`📝 YOUR SAVED NOTE
-
-${notes[userId]}`
+    "❌ You don't have any saved note."
   );
+
+}
+
+bot.sendMessage(
+  msg.chat.id,
+  `📝 YOUR SAVED NOTE
+
+${data.note}`
+);
+
+} catch (err) {
+
+console.error(err);
+
+bot.sendMessage(
+  msg.chat.id,
+  "❌ Failed to fetch note."
+);
+
+}
 
 });
 
 // Delete Note
-bot.onText(/\/deletenote/, async (msg) => {
+bot.onText(//deletenote/, async (msg) => {
 
-  const userId = msg.from.id;
+try {
 
-  let notes = {};
+const userId = msg.from.id;
 
-  if (fs.existsSync(NOTES_FILE)) {
-    notes = JSON.parse(
-      fs.readFileSync(NOTES_FILE)
-    );
-  }
+const result = await db
+  .collection("notes")
+  .deleteOne({ userId: userId });
 
-  if (!notes[userId]) {
+if (result.deletedCount === 0) {
 
-    return bot.sendMessage(
-      msg.chat.id,
-      "❌ No saved note found."
-    );
-
-  }
-
-  delete notes[userId];
-
-  fs.writeFileSync(
-    NOTES_FILE,
-    JSON.stringify(notes, null, 2)
-  );
-
-  bot.sendMessage(
+  return bot.sendMessage(
     msg.chat.id,
-    "🗑 Note deleted successfully."
+    "❌ No saved note found."
   );
+
+}
+
+bot.sendMessage(
+  msg.chat.id,
+  "🗑 Note deleted successfully."
+);
+
+} catch (err) {
+
+console.error(err);
+
+bot.sendMessage(
+  msg.chat.id,
+  "❌ Failed to delete note."
+);
+
+}
 
 });
+
+      
+
+  
 // ================= COUNTDOWN =================
 
 bot.onText(/\/countdown (.+)/, async (msg, match) => {
