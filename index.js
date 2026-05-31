@@ -2424,3 +2424,41 @@ ${(team.strDescriptionEN || 'No description available.')
   }
 
 });
+// ================= REMINDER =================
+
+bot.onText(/\/remind (\d+) (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+
+  const minutes = parseInt(match[1]);
+  const reminder = match[2];
+
+  if (minutes <= 0) {
+    return bot.sendMessage(
+      chatId,
+      '❌ Please enter a valid number of minutes.'
+    );
+  }
+
+  bot.sendMessage(
+    chatId,
+`⏰ Reminder Set!
+
+🕒 Time: ${minutes} minute(s)
+
+📝 Message:
+${reminder}`
+  );
+
+  setTimeout(() => {
+
+    bot.sendMessage(
+      chatId,
+`🔔 REMINDER
+
+${reminder}`
+    );
+
+  }, minutes * 60 * 1000);
+
+});
