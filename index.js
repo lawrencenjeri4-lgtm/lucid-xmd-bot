@@ -2633,7 +2633,6 @@ bot.onText(/\/ss (.+)/, async (msg, match) => {
 
   let website = match[1].trim();
 
-  // Add https:// only if missing
   if (
     !website.startsWith("http://") &&
     !website.startsWith("https://")
@@ -2644,7 +2643,7 @@ bot.onText(/\/ss (.+)/, async (msg, match) => {
   try {
 
     const screenshotUrl =
-      `https://api.screenshotone.com/take?access_key=${process.env.SCREENSHOT_API_KEY}&url=${encodeURIComponent(website)}&format=jpg&full_page=true`;
+      `https://api.screenshotone.com/take?access_key=${process.env.SCREENSHOT_API_KEY}&url=${encodeURIComponent(website)}&format=jpg&full_page=true&delay=3&timeout=60&image_quality=80`;
 
     console.log("SCREENSHOT URL:", screenshotUrl);
 
@@ -2652,7 +2651,10 @@ bot.onText(/\/ss (.+)/, async (msg, match) => {
       msg.chat.id,
       screenshotUrl,
       {
-        caption: `🌐 Screenshot of ${website}`
+        caption:
+`🌐 WEBSITE SCREENSHOT
+
+🔗 ${website}`
       }
     );
 
@@ -2665,7 +2667,7 @@ bot.onText(/\/ss (.+)/, async (msg, match) => {
 
     bot.sendMessage(
       msg.chat.id,
-      '❌ Failed to capture screenshot.'
+      "❌ Failed to capture screenshot."
     );
 
   }
