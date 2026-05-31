@@ -2304,3 +2304,53 @@ ${data.registrar || 'Unknown'}`
   }
 
 });
+// ================= PHONE INFO =================
+
+bot.onText(/\/phone (.+)/, async (msg, match) => {
+
+  const number = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `http://apilayer.net/api/validate?access_key=${process.env.NUMVERIFY_API_KEY}&number=${encodeURIComponent(number)}`
+    );
+
+    const data = response.data;
+
+    if (!data.valid) {
+      return bot.sendMessage(
+        msg.chat.id,
+        '❌ Invalid phone number.'
+      );
+    }
+
+    bot.sendMessage(
+      msg.chat.id,
+`📱 PHONE INFORMATION
+
+☎️ Number: ${data.international_format}
+
+🌍 Country: ${data.country_name}
+
+📡 Carrier: ${data.carrier || 'Unknown'}
+
+📍 Location: ${data.location || 'Unknown'}
+
+📞 Line Type: ${data.line_type || 'Unknown'}`
+    );
+
+  } catch (error) {
+
+    console.log(
+      error.response?.data || error.message
+    );
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Failed to fetch phone information.'
+    );
+
+  }
+
+});
