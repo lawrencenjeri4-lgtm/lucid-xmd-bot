@@ -2080,3 +2080,44 @@ ${monospace}`
   );
 
 });
+// ================= NAME GENERATOR =================
+
+bot.onText(/\/name (.+)/, (msg, match) => {
+
+  const name = match[1];
+
+  const styles = `👑 VIP NAME GENERATOR
+
+1. 𓉳 𝗠𝗥⎢${name}𓋹
+
+2. 𒁂VΣ᳄ФM𒀭 ${name}
+
+3. ꧁༒☬${name}☬༒꧂
+
+4. 『👑』${name}『👑』
+
+5. 𓃵 𝗟𝗘𝗚𝗘𝗡𝗗⎢${name}
+
+6. ☠️⃟${name}⃟☠️
+
+7. ⤹ꜛ⃟🕷️⃟ꜛ⤸${name}
+
+8. 𓆩⚡𓆪 ${name} 𓆩⚡𓆪
+
+9. ༄𓆩${name}𓆪༄
+
+10. ☢⃟${name}⃟☢
+
+11. ✞⏤͟͞𓆩${name}𓆪͙⏤͟͞✞
+
+12. 𓆣⃝⃪🦋 ${name} 🦋⃝⃪𓆈
+
+13. ♛ ${name} ♛
+
+14. ★彡 ${name} 彡★
+
+15. ꧁𓊈𒆜${name}𒆜𓊉꧂`;
+
+  bot.sendMessage(msg.chat.id, styles);
+
+});
