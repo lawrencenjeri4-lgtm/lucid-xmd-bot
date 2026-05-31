@@ -2354,3 +2354,56 @@ bot.onText(/\/phone (.+)/, async (msg, match) => {
   }
 
 });
+// ================= TEAM INFO =================
+
+bot.onText(/\/team (.+)/, async (msg, match) => {
+
+  const team = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(team)}`
+    );
+
+    const data = response.data.teams;
+
+    if (!data || !data.length) {
+      return bot.sendMessage(
+        msg.chat.id,
+        '❌ Team not found.'
+      );
+    }
+
+    const t = data[0];
+
+    bot.sendMessage(
+      msg.chat.id,
+`⚽ TEAM INFORMATION
+
+🏟 Name: ${t.strTeam}
+
+🌍 Country: ${t.strCountry}
+
+🏆 League: ${t.strLeague}
+
+📅 Founded: ${t.intFormedYear}
+
+🏟 Stadium: ${t.strStadium}
+
+📝 Description:
+${(t.strDescriptionEN || "No description available").substring(0, 300)}...`
+    );
+
+  } catch (error) {
+
+    console.log(error.response?.data || error.message);
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Failed to fetch team information.'
+    );
+
+  }
+
+});
