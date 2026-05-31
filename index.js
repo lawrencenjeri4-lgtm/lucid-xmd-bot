@@ -2121,3 +2121,48 @@ bot.onText(/\/name (.+)/, (msg, match) => {
   bot.sendMessage(msg.chat.id, styles);
 
 });
+// ================= COUNTRY INFO =================
+
+bot.onText(/\/country (.+)/, async (msg, match) => {
+
+  const country = match[1];
+
+  try {
+
+    const response = await axios.get(
+      `https://restcountries.com/v3.1/name/${country}`
+    );
+
+    const data = response.data[0];
+
+    const name = data.name.common;
+    const capital = data.capital?.[0] || "N/A";
+    const region = data.region;
+    const population = data.population.toLocaleString();
+    const currency = Object.values(data.currencies || {})[0]?.name || "N/A";
+    const flag = data.flag;
+
+    bot.sendMessage(
+      msg.chat.id,
+`🌍 COUNTRY INFORMATION
+
+${flag} ${name}
+
+🏛 Capital: ${capital}
+🌎 Region: ${region}
+👥 Population: ${population}
+💰 Currency: ${currency}`
+    );
+
+  } catch (error) {
+
+    console.log(error.message);
+
+    bot.sendMessage(
+      msg.chat.id,
+      '❌ Country not found.'
+    );
+
+  }
+
+});
