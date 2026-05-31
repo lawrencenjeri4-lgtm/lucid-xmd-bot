@@ -2560,3 +2560,70 @@ bot.onText(/\/deletenote/, async (msg) => {
   );
 
 });
+// ================= COUNTDOWN =================
+
+bot.onText(/\/countdown (.+)/, async (msg, match) => {
+
+  const targetDate = new Date(match[1]);
+
+  if (isNaN(targetDate)) {
+    return bot.sendMessage(
+      msg.chat.id,
+      '❌ Invalid date format.\n\nExample:\n/countdown 2027-01-01'
+    );
+  }
+
+  const now = new Date();
+
+  const diff = targetDate - now;
+
+  if (diff <= 0) {
+    return bot.sendMessage(
+      msg.chat.id,
+      '🎉 That date has already arrived!'
+    );
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  bot.sendMessage(
+    msg.chat.id,
+`⏳ COUNTDOWN
+
+📅 Target Date: ${match[1]}
+
+🕒 Days Remaining: ${days}`
+  );
+
+});
+// ================= LOGO MAKER =================
+
+bot.onText(/\/logo (.+)/, async (msg, match) => {
+
+  const text = encodeURIComponent(match[1]);
+
+  bot.sendMessage(
+    msg.chat.id,
+`🎨 LOGO MAKER
+
+Choose a logo style:
+
+🔥 Gaming Logo
+https://textpro.me/create-neon-light-text-effect-online-882.html
+
+👑 Gold Logo
+https://textpro.me/gold-text-effect-online-876.html
+
+⚡ Neon Logo
+https://textpro.me/neon-text-effect-online-963.html
+
+💎 Luxury Logo
+https://textpro.me/luxury-gold-text-effect-1003.html
+
+📝 Your Text:
+${decodeURIComponent(text)}
+
+⚠️ Paste your text on the website to generate the logo.`
+  );
+
+});
