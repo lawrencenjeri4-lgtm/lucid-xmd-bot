@@ -2166,3 +2166,49 @@ ${flag} ${name}
   }
 
 });
+// ================= CONVERT =================
+
+bot.onText(/\/convert (\d+) ([A-Za-z]{3}) ([A-Za-z]{3})/, async (msg, match) => {
+
+  const amount = parseFloat(match[1]);
+  const from = match[2].toUpperCase();
+  const to = match[3].toUpperCase();
+
+  try {
+
+    const response = await axios.get(
+      `https://open.er-api.com/v6/latest/${from}`
+    );
+
+    const rate = response.data.rates[to];
+
+    if (!rate) {
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ Invalid currency code."
+      );
+    }
+
+    const result = (amount * rate).toFixed(2);
+
+    bot.sendMessage(
+      msg.chat.id,
+`💱 CURRENCY CONVERTER
+
+💵 ${amount} ${from}
+
+🔄 = ${result} ${to}`
+    );
+
+  } catch (error) {
+
+    console.log(error.message);
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Failed to convert currency."
+    );
+
+  }
+
+});
