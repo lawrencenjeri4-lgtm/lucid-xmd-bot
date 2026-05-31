@@ -1,3 +1,5 @@
+// ================= MONGODB =================
+
 const { MongoClient } = require("mongodb");
 
 const client = new MongoClient(process.env.MONGODB_URI);
@@ -5,13 +7,47 @@ const client = new MongoClient(process.env.MONGODB_URI);
 let db;
 
 async function connectDB() {
+
   try {
+
+    console.log("🔄 Connecting to MongoDB...");
+    console.log(
+      "MongoDB URI exists:",
+      !!process.env.MONGODB_URI
+    );
+
     await client.connect();
+
     db = client.db("LucidXMD");
-    console.log("✅ MongoDB Connected");
+
+    console.log(
+      "✅✅✅ MONGODB CONNECTED SUCCESSFULLY ✅✅✅"
+    );
+
+    console.log(
+      "📂 Database:",
+      db.databaseName
+    );
+
+    // Test write
+    await db.collection("test").insertOne({
+      message: "Lucid XMD MongoDB Test",
+      time: new Date()
+    });
+
+    console.log(
+      "🧪 Test document inserted successfully"
+    );
+
   } catch (err) {
-    console.error("❌ MongoDB Error:", err);
+
+    console.error(
+      "❌ MongoDB Error:",
+      err
+    );
+
   }
+
 }
 
 connectDB();
