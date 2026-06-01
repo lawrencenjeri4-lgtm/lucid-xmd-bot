@@ -2846,21 +2846,44 @@ if (
 
   if (isAdmin) return;
 
-  await bot.deleteMessage(
-    chatId,
-    msg.message_id
-  );
+  try {
 
-  bot.sendMessage(
-    chatId,
-    `🚫 Links are not allowed, ${msg.from.first_name}!`
-  );
+    console.log(
+      "ATTEMPTING TO DELETE:",
+      msg.message_id
+    );
+
+    await bot.deleteMessage(
+      chatId,
+      msg.message_id
+    );
+
+    console.log(
+      "MESSAGE DELETED SUCCESSFULLY"
+    );
+
+    bot.sendMessage(
+      chatId,
+      `🚫 Links are not allowed, ${msg.from.first_name}!`
+    );
+
+  } catch (err) {
+
+    console.log(
+      "DELETE ERROR:",
+      err
+    );
+
+  }
 
 }
 
 } catch (error) {
 
-console.log("ANTILINK ERROR:", error);
+console.log(
+  "ANTILINK ERROR:",
+  error
+);
 
 }
 
