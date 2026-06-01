@@ -2809,82 +2809,77 @@ bot.sendMessage(
 
 bot.on('message', async (msg) => {
 
-if (!msg.text) return;
+  if (!msg.text) return;
 
-const chatId = msg.chat.id;
+  const chatId = msg.chat.id;
 
-console.log("ANTILINK TRIGGERED:", msg.text);
+  // Ignore private chats
+  if (msg.chat.type === 'private') return;
 
-// Ignore private chats
-if (msg.chat.type === 'private') return;
+  const text = msg.text.toLowerCase();
 
-try {
-
-const settings = await db
-  .collection("groupSettings")
-  .findOne({ chatId });
-
-console.log("GROUP SETTINGS:", settings);
-
-if (!settings?.antiLink) return;
-
-const text = msg.text.toLowerCase();
-
-if (
-  text.includes('http://') ||
-  text.includes('https://') ||
-  text.includes('t.me/')
-) {
-
-  const admins =
-    await bot.getChatAdministrators(chatId);
-
-  const isAdmin =
-    admins.some(
-      admin => admin.user.id === msg.from.id
-    );
-
-  if (isAdmin) return;
+  console.log("ANTILINK TRIGGERED:", text);
 
   try {
 
-    console.log(
-      "ATTEMPTING TO DELETE:",
-      msg.message_id
-    );
+    const settings = await db
+      .collection("groupSettings")
+      .findOne({ chatId });
 
-    await bot.deleteMessage(
-      chatId,
-      msg.message_id
-    );
+    console.log("GROUP SETTINGS:", settings);
 
-    console.log(
-      "MESSAGE DELETED SUCCESSFULLY"
-    );
+    if (!settings || !settings.antiLink) return;
 
-    bot.sendMessage(
-      chatId,
-      `🚫 Links are not allowed, ${msg.from.first_name}!`
-    );
+    if (
+      text.includes('http://') ||
+      text.includes('https://') ||
+      text.includes('t.me/')
+    ) {
 
-  } catch (err) {
+      console.log("LINK DETECTED");
+
+      const admins =
+        await bot.getChatAdministrators(chatId);
+
+      console.log("ADMINS FETCHED");
+
+      const isAdmin =
+        admins.some(
+          admin => admin.user.id === msg.from.id
+        );
+
+      console.log("IS ADMIN:", isAdmin);
+
+      if (isAdmin) return;
+
+      console.log(
+        "ATTEMPTING TO DELETE:",
+        msg.message_id
+      );
+
+      await bot.deleteMessage(
+        chatId,
+        msg.message_id
+      );
+
+      console.log(
+        "MESSAGE DELETED SUCCESSFULLY"
+      );
+
+      bot.sendMessage(
+        chatId,
+        `🚫 Links are not allowed, ${msg.from.first_name}!`
+      );
+
+    }
+
+  } catch (error) {
 
     console.log(
       "DELETE ERROR:",
-      err
+      error.response?.body || error.message
     );
 
   }
-
-}
-
-} catch (error) {
-
-console.log(
-  "ANTILINK ERROR:",
-  error
-);
-
-}
 
 });
