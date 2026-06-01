@@ -58,6 +58,7 @@ const translate = require('@vitalets/google-translate-api');
 const startTime = Date.now();
 const fs = require('fs');
 const path = require('path');
+const math = require('mathjs');
 
 const ytdl = require('@distube/ytdl-core');
 const ffmpeg = require('fluent-ffmpeg');
@@ -768,26 +769,29 @@ bot.onText(/\/time/, async (msg) => {
 bot.onText(/\/calc (.+)/, async (msg, match) => {
 
   const chatId = msg.chat.id;
-
   const expression = match[1];
 
   try {
 
-    const result = eval(expression);
+    const result = math.evaluate(expression);
 
-    bot.sendMessage(chatId,
+    bot.sendMessage(
+      chatId,
 `🧮 CALCULATOR
 
 📥 Expression:
 ${expression}
 
 ✅ Result:
-${result}`);
+${result}`
+    );
 
   } catch (error) {
 
-    bot.sendMessage(chatId,
-'❌ Invalid calculation.');
+    bot.sendMessage(
+      chatId,
+      '❌ Invalid expression.\n\nExample:\n/calc 25 * 4 + 10'
+    );
 
   }
 
