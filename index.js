@@ -2632,48 +2632,57 @@ bot.onText(/\/ss (.+)/, async (msg, match) => {
 
 bot.on('message', async (msg) => {
 
-  if (!msg.text) return;
+if (!msg.text) return;
 
-  const chatId = msg.chat.id;
+const chatId = msg.chat.id;
 
-  // Ignore private chats
-  if (msg.chat.type === 'private') return;
+// Ignore private chats
+if (msg.chat.type === 'private') return;
 
-  const text = msg.text.toLowerCase();
+try {
 
-  if (
-    text.includes('http://') ||
-    text.includes('https://') ||
-    text.includes('t.me/')
-  ) {
+// Check Anti-Link setting
+const settings = await db
+  .collection("groupSettings")
+  .findOne({ chatId });
 
-    try {
+if (!settings?.antiLink) return;
 
-      const admins =
-        await bot.getChatAdministrators(chatId);
+const text = msg.text.toLowerCase();
 
-      const isAdmin =
-        admins.some(
-          admin => admin.user.id === msg.from.id
-        );
+if (
+  text.includes('http://') ||
+  text.includes('https://') ||
+  text.includes('t.me/')
+) {
 
-      if (isAdmin) return;
+  const admins =
+    await bot.getChatAdministrators(chatId);
 
-      await bot.deleteMessage(
-        chatId,
-        msg.message_id
-      );
+  const isAdmin =
+    admins.some(
+      admin => admin.user.id === msg.from.id
+    );
 
-      bot.sendMessage(
-        chatId,
-        `🚫 Links are not allowed, ${msg.from.first_name}!`
-      );
+  if (isAdmin) return;
 
-    } catch (error) {
-      console.log(error);
-    }
+  await bot.deleteMessage(
+    chatId,
+    msg.message_id
+  );
 
-  }
+  bot.sendMessage(
+    chatId,
+    `🚫 Links are not allowed, ${msg.from.first_name}!`
+  );
+
+}
+
+} catch (error) {
+
+console.log(error);
+
+}
 
 });
 // ================= NOTES =================
