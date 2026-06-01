@@ -2676,3 +2676,41 @@ bot.on('message', async (msg) => {
   }
 
 });
+// ================= NOTES =================
+
+// Save Note
+bot.onText(//save (.+)/, async (msg, match) => {
+
+try {
+
+const userId = msg.from.id;
+const note = match[1];
+
+await db.collection("notes").updateOne(
+  { userId },
+  {
+    $set: {
+      note,
+      updatedAt: new Date()
+    }
+  },
+  { upsert: true }
+);
+
+bot.sendMessage(
+  msg.chat.id,
+  "✅ Note saved successfully."
+);
+
+} catch (err) {
+
+console.error(err);
+
+bot.sendMessage(
+  msg.chat.id,
+  "❌ Failed to save note."
+);
+
+}
+
+});
