@@ -1268,16 +1268,73 @@ bot.onText(/\/kick/, async (msg) => {
 });
 // ================= MUTE =================
 
-bot.onText(/\/mute (.+)/, (msg, match) => {
+bot.onText(/\/mute/, async (msg) => {
 
-  bot.sendMessage(
-    msg.chat.id,
-`🔇 User Muted
+  const chatId = msg.chat.id;
 
-👤 ${match[1]}
+  if (msg.chat.type === "private") {
+    return bot.sendMessage(
+      chatId,
+      "❌ This command only works in groups."
+    );
+  }
 
-⏳ Until an admin unmutes them.`
-  );
+  if (!msg.reply_to_message) {
+    return bot.sendMessage(
+      chatId,
+      "❌ Reply to the user's message to mute them."
+    );
+  }
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can use this command."
+      );
+    }
+
+    const targetUser =
+      msg.reply_to_message.from;
+
+    await bot.restrictChatMember(
+      chatId,
+      targetUser.id,
+      {
+        permissions: {
+          can_send_messages: false,
+          can_send_polls: false,
+          can_send_other_messages: false,
+          can_add_web_page_previews: false
+        }
+      }
+    );
+
+    bot.sendMessage(
+      chatId,
+      `🔇 ${targetUser.first_name} has been muted.`
+    );
+
+  } catch (error) {
+
+    console.log("MUTE ERROR:", error);
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to mute member. Make sure I am an admin with Restrict Members permission."
+    );
+
+  }
+
 });
 // ================= UNMUTE =================
 
