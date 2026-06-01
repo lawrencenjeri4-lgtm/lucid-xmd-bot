@@ -2754,3 +2754,41 @@ ${data.note}`
   }
 
 });
+
+// Delete Note
+bot.onText(/\/deletenote/, async (msg) => {
+
+  try {
+
+    const userId = msg.from.id;
+
+    const result = await db
+      .collection("notes")
+      .deleteOne({ userId });
+
+    if (result.deletedCount === 0) {
+
+      return bot.sendMessage(
+        msg.chat.id,
+        "❌ No saved note found."
+      );
+
+    }
+
+    bot.sendMessage(
+      msg.chat.id,
+      "🗑 Note deleted successfully."
+    );
+
+  } catch (err) {
+
+    console.error(err);
+
+    bot.sendMessage(
+      msg.chat.id,
+      "❌ Failed to delete note."
+    );
+
+  }
+
+});
