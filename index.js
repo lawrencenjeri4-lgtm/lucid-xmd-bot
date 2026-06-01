@@ -1391,9 +1391,17 @@ bot.onText(/\/unmute/, async (msg) => {
           can_send_polls: true,
           can_send_other_messages: true,
           can_add_web_page_previews: true,
-          can_invite_users: true
-        }
+          can_change_info: false,
+          can_invite_users: true,
+          can_pin_messages: false
+        },
+        use_independent_chat_permissions: true
       }
+    );
+
+    console.log(
+      "UNMUTED USER:",
+      targetUser.id
     );
 
     bot.sendMessage(
@@ -1403,7 +1411,10 @@ bot.onText(/\/unmute/, async (msg) => {
 
   } catch (error) {
 
-    console.log("UNMUTE ERROR:", error);
+    console.log(
+      "UNMUTE ERROR:",
+      error
+    );
 
     bot.sendMessage(
       chatId,
