@@ -2632,12 +2632,24 @@ bot.onText(/\/ss (.+)/, async (msg, match) => {
 
 bot.on('message', async (msg) => {
 
-if (!msg.text) return;
+  if (!msg.text) return;
 
-const chatId = msg.chat.id;
+  const chatId = msg.chat.id;
 
-// Ignore private chats
-if (msg.chat.type === 'private') return;
+  console.log("ANTILINK TRIGGERED:", msg.text);
+
+  // Ignore private chats
+  if (msg.chat.type === 'private') return;
+
+  try {
+
+    const settings = await db
+      .collection("groupSettings")
+      .findOne({ chatId });
+
+    console.log("GROUP SETTINGS:", settings);
+
+    if (!settings?.antiLink) return;
 
 try {
 
