@@ -1201,17 +1201,70 @@ Please follow group rules.`
 });
 // ================= KICK =================
 
-bot.onText(/\/kick (.+)/, (msg, match) => {
+bot.onText(/\/kick/, async (msg) => {
 
-  bot.sendMessage(
-    msg.chat.id,
-`👮 Kick Command
+  const chatId = msg.chat.id;
 
-Target:
-${match[1]}
+  if (msg.chat.type === "private") {
+    return bot.sendMessage(
+      chatId,
+      "❌ This command only works in groups."
+    );
+  }
 
-⚠️ Full admin kick system coming soon.`
-  );
+  if (!msg.reply_to_message) {
+    return bot.sendMessage(
+      chatId,
+      "❌ Reply to the user's message to kick them."
+    );
+  }
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can use this command."
+      );
+    }
+
+    const targetUser =
+      msg.reply_to_message.from;
+
+    await bot.banChatMember(
+      chatId,
+      targetUser.id
+    );
+
+    await bot.unbanChatMember(
+      chatId,
+      targetUser.id
+    );
+
+    bot.sendMessage(
+      chatId,
+      `👢 ${targetUser.first_name} has been kicked from the group.`
+    );
+
+  } catch (error) {
+
+    console.log("KICK ERROR:", error);
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to kick member. Make sure I am an admin with Ban Users permission."
+    );
+
+  }
+
 });
 // ================= MUTE =================
 
