@@ -2679,7 +2679,7 @@ bot.on('message', async (msg) => {
 // ================= NOTES =================
 
 // Save Note
-bot.onText(//save (.+)/, async (msg, match) => {
+bot.onText(/\/save (.+)/, async (msg, match) => {
 
 try {
 
