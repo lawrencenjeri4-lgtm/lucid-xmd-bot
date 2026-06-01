@@ -1338,14 +1338,73 @@ bot.onText(/\/mute/, async (msg) => {
 });
 // ================= UNMUTE =================
 
-bot.onText(/\/unmute (.+)/, (msg, match) => {
+bot.onText(/\/unmute/, async (msg) => {
 
-  bot.sendMessage(
-    msg.chat.id,
-`🔊 User Unmuted
+  const chatId = msg.chat.id;
 
-👤 ${match[1]}`
-  );
+  if (msg.chat.type === "private") {
+    return bot.sendMessage(
+      chatId,
+      "❌ This command only works in groups."
+    );
+  }
+
+  if (!msg.reply_to_message) {
+    return bot.sendMessage(
+      chatId,
+      "❌ Reply to the user's message to unmute them."
+    );
+  }
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can use this command."
+      );
+    }
+
+    const targetUser =
+      msg.reply_to_message.from;
+
+    await bot.restrictChatMember(
+      chatId,
+      targetUser.id,
+      {
+        permissions: {
+          can_send_messages: true,
+          can_send_polls: true,
+          can_send_other_messages: true,
+          can_add_web_page_previews: true
+        }
+      }
+    );
+
+    bot.sendMessage(
+      chatId,
+      `🔊 ${targetUser.first_name} has been unmuted.`
+    );
+
+  } catch (error) {
+
+    console.log("UNMUTE ERROR:", error);
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to unmute member."
+    );
+
+  }
+
 });
 // ================= ID =================
 
