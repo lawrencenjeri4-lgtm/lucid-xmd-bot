@@ -2792,3 +2792,64 @@ bot.onText(/\/deletenote/, async (msg) => {
   }
 
 });
+// ================= ANTILINK SETTINGS =================
+
+bot.onText(/\/antilink (on|off)/, async (msg, match) => {
+try {
+
+if (msg.chat.type === "private") {
+
+  return bot.sendMessage(
+    msg.chat.id,
+    "❌ This command only works in groups."
+  );
+
+}
+
+const chatId = msg.chat.id;
+const state = match[1];
+
+const admins =
+  await bot.getChatAdministrators(chatId);
+
+const isAdmin =
+  admins.some(
+    admin => admin.user.id === msg.from.id
+  );
+
+if (!isAdmin) {
+
+  return bot.sendMessage(
+    chatId,
+    "❌ Only admins can change Anti-Link settings."
+  );
+
+}
+
+await db.collection("groupSettings").updateOne(
+  { chatId },
+  {
+    $set: {
+      antiLink: state === "on"
+    }
+  },
+  { upsert: true }
+);
+
+bot.sendMessage(
+  chatId,
+  `✅ Anti-Link has been turned ${state.toUpperCase()}`
+);
+
+} catch (err) {
+
+console.error(err);
+
+bot.sendMessage(
+  msg.chat.id,
+  "❌ Failed to update Anti-Link setting."
+);
+
+}
+
+});
