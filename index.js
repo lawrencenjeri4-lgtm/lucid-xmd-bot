@@ -2714,3 +2714,42 @@ bot.sendMessage(
 }
 
 });
+// View Note
+bot.onText(//mynote/, async (msg) => {
+
+try {
+
+const userId = msg.from.id;
+
+const data = await db
+  .collection("notes")
+  .findOne({ userId });
+
+if (!data) {
+
+  return bot.sendMessage(
+    msg.chat.id,
+    "❌ You don't have any saved note."
+  );
+
+}
+
+bot.sendMessage(
+  msg.chat.id,
+  `📝 YOUR SAVED NOTE
+
+${data.note}`
+);
+
+} catch (err) {
+
+console.error(err);
+
+bot.sendMessage(
+  msg.chat.id,
+  "❌ Failed to fetch note."
+);
+
+}
+
+});
