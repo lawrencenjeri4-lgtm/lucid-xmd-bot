@@ -3206,3 +3206,71 @@ bot.onText(/\/warnings/, async (msg) => {
   }
 
 });
+// ================= CLEAR WARNS =================
+
+bot.onText(/\/clearwarns/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  if (msg.chat.type === "private") {
+    return bot.sendMessage(
+      chatId,
+      "❌ This command only works in groups."
+    );
+  }
+
+  if (!msg.reply_to_message) {
+    return bot.sendMessage(
+      chatId,
+      "❌ Reply to the user's message."
+    );
+  }
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can clear warnings."
+      );
+    }
+
+    const targetUser =
+      msg.reply_to_message.from;
+
+    const userId = targetUser.id;
+
+    await db.collection("warnings")
+    .deleteOne({
+      chatId,
+      userId
+    });
+
+    bot.sendMessage(
+      chatId,
+      `✅ All warnings for ${targetUser.first_name} have been cleared.`
+    );
+
+  } catch (error) {
+
+    console.log(
+      "CLEARWARNS ERROR:",
+      error
+    );
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to clear warnings."
+    );
+
+  }
+
+});
