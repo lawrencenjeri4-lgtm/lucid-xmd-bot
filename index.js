@@ -1188,16 +1188,101 @@ ${text}`
 });
 // ================= WARN =================
 
-bot.onText(/\/warn (.+)/, (msg, match) => {
+bot.onText(/\/warn/, async (msg) => {
 
-  bot.sendMessage(
-    msg.chat.id,
-`⚠️ WARNING ISSUED
+  const chatId = msg.chat.id;
 
-👤 User: ${match[1]}
+  if (msg.chat.type === "private") {
+    return bot.sendMessage(
+      chatId,
+      "❌ This command only works in groups."
+    );
+  }
 
-Please follow group rules.`
-  );
+  if (!msg.reply_to_message) {
+    return bot.sendMessage(
+      chatId,
+      "❌ Reply to a user's message to warn them."
+    );
+  }
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can warn members."
+      );
+    }
+
+    const targetUser =
+      msg.reply_to_message.from;
+
+    const userId = targetUser.id;
+
+    const warningData =
+      await db.collection("warnings")
+      .findOne({ chatId, userId });
+
+    let warnings = 1;
+
+    if (warningData) {
+      warnings = warningData.warnings + 1;
+    }
+
+    await db.collection("warnings")
+    .updateOne(
+      { chatId, userId },
+      {
+        $set: {
+          warnings,
+          updatedAt: new Date()
+        }
+      },
+      { upsert: true }
+    );
+
+    if (warnings >= 3) {
+
+      await bot.banChatMember(
+        chatId,
+        userId
+      );
+
+      await db.collection("warnings")
+      .deleteOne({ chatId, userId });
+
+      return bot.sendMessage(
+        chatId,
+        `🚫 ${targetUser.first_name} reached 3 warnings and has been banned.`
+      );
+
+    }
+
+    bot.sendMessage(
+      chatId,
+      `⚠️ ${targetUser.first_name} has been warned.\n\nWarnings: ${warnings}/3`
+    );
+
+  } catch (error) {
+
+    console.log("WARN ERROR:", error);
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to warn member."
+    );
+
+  }
+
 });
 // ================= KICK =================
 
