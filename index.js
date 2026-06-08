@@ -3159,3 +3159,50 @@ bot.on('message', async (msg) => {
   }
 
 });
+// ================= WARNINGS =================
+
+bot.onText(/\/warnings/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  if (!msg.reply_to_message) {
+    return bot.sendMessage(
+      chatId,
+      "❌ Reply to a user's message to check warnings."
+    );
+  }
+
+  try {
+
+    const targetUser =
+      msg.reply_to_message.from;
+
+    const userId = targetUser.id;
+
+    const warningData =
+      await db.collection("warnings")
+      .findOne({ chatId, userId });
+
+    const warnings =
+      warningData?.warnings || 0;
+
+    bot.sendMessage(
+      chatId,
+      `⚠️ Warning Count\n\n👤 ${targetUser.first_name}\n📊 Warnings: ${warnings}/3`
+    );
+
+  } catch (error) {
+
+    console.log(
+      "WARNINGS ERROR:",
+      error
+    );
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to fetch warnings."
+    );
+
+  }
+
+});
