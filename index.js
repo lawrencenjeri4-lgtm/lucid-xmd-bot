@@ -3085,80 +3085,108 @@ bot.sendMessage(
 
 bot.on('message', async (msg) => {
 
-  if (!msg.text) return;
-
-  const chatId = msg.chat.id;
-
-  // Ignore private chats
-  if (msg.chat.type === 'private') return;
-
-  const text = msg.text.toLowerCase();
-
-  console.log("ANTILINK TRIGGERED:", text);
-
   try {
 
-    const settings = await db
-      .collection("groupSettings")
+    if (!msg.text) return;
+
+    const chatId = msg.chat.id;
+
+    if (msg.chat.type === "private") return;
+
+    const settings =
+      await db.collection("groups")
       .findOne({ chatId });
 
-    console.log("GROUP SETTINGS:", settings);
+    if (!settings?.antiLink) return;
 
-    if (!settings || !settings.antiLink) return;
+    const text = msg.text.toLowerCase();
 
-    if (
-      text.includes('http://') ||
-      text.includes('https://') ||
-      text.includes('t.me/')
-    ) {
+    const hasLink =
+      text.includes("http://") ||
+      text.includes("https://") ||
+      text.includes("www.") ||
+      text.includes("t.me/");
 
-      console.log("LINK DETECTED");
+    if (!hasLink) return;
 
-      const admins =
-        await bot.getChatAdministrators(chatId);
+    const admins =
+      await bot.getChatAdministrators(chatId);
 
-      console.log("ADMINS FETCHED");
-
-      const isAdmin =
-        admins.some(
-          admin => admin.user.id === msg.from.id
-        );
-
-      console.log("IS ADMIN:", isAdmin);
-
-      if (isAdmin) return;
-
-      console.log(
-        "ATTEMPTING TO DELETE:",
-        msg.message_id
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
       );
 
-      await bot.deleteMessage(
+    if (isAdmin) return;
+
+    // Delete the link
+    await bot.deleteMessage(
+      chatId,
+      msg.message_id
+    );
+
+    const userId = msg.from.id;
+
+    const warningData =
+      await db.collection("warnings")
+      .findOne({ chatId, userId });
+
+    let warnings = 1;
+
+    if (warningData) {
+      warnings = warningData.warnings + 1;
+    }
+
+    await db.collection("warnings")
+    .updateOne(
+      { chatId, userId },
+      {
+        $set: {
+          warnings,
+          updatedAt: new Date()
+        }
+      },
+      { upsert: true }
+    );
+
+    if (warnings >= 3) {
+
+      await bot.banChatMember(
         chatId,
-        msg.message_id
+        userId
       );
 
-      console.log(
-        "MESSAGE DELETED SUCCESSFULLY"
-      );
-
-      bot.sendMessage(
+      await db.collection("warnings")
+      .deleteOne({
         chatId,
-        `🚫 Links are not allowed, ${msg.from.first_name}!`
+        userId
+      });
+
+      return bot.sendMessage(
+        chatId,
+        `🚫 ${msg.from.first_name} reached 3 warnings and has been banned for sending links.`
       );
 
     }
 
+    bot.sendMessage(
+      chatId,
+      `🚫 Links are not allowed.\n\n⚠️ ${msg.from.first_name} has been warned.\nWarnings: ${warnings}/3`
+    );
+
   } catch (error) {
 
     console.log(
-      "DELETE ERROR:",
-      error.response?.body || error.message
+      "ANTILINK ERROR:",
+      error
     );
 
   }
 
 });
+      
+
+    
 // ================= WARNINGS =================
 
 bot.onText(/\/warnings/, async (msg) => {
