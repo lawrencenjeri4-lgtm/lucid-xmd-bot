@@ -3094,8 +3094,12 @@ bot.on('message', async (msg) => {
     if (msg.chat.type === "private") return;
 
     const settings =
-      await db.collection("groups")
-      .findOne({ chatId });
+  await db.collection("groupSettings")
+  .findOne({ chatId });
+
+console.log("ANTILINK SETTINGS:", settings);
+
+if (!settings?.antiLink) return;
 
     if (!settings?.antiLink) return;
 
