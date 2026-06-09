@@ -3044,6 +3044,20 @@ const isAdmin =
   admins.some(
     admin => admin.user.id === msg.from.id
   );
+ console.log(
+  "SENDER ID:",
+  msg.from.id
+);
+
+console.log(
+  "ADMINS:",
+  admins.map(a => a.user.id)
+);
+
+console.log(
+  "IS ADMIN:",
+  isAdmin
+); 
 
 if (!isAdmin) {
 
