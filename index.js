@@ -3126,11 +3126,21 @@ if (!hasLink) return;
 
     if (isAdmin) return;
 
-    // Delete the link
-    await bot.deleteMessage(
-      chatId,
-      msg.message_id
-    );
+     // Delete the link
+
+console.log(
+  "ATTEMPTING TO DELETE MESSAGE:",
+  msg.message_id
+);
+
+await bot.deleteMessage(
+  chatId,
+  msg.message_id
+);
+
+console.log(
+  "MESSAGE DELETED SUCCESSFULLY"
+);
 
     const userId = msg.from.id;
 
@@ -3183,10 +3193,9 @@ if (!hasLink) return;
 
   } catch (error) {
 
-    console.log(
-      "ANTILINK ERROR:",
-      error
-    );
+  console.log("========== ANTILINK ERROR ==========");
+  console.log(error.response?.body || error);
+  console.log("====================================");
 
   }
 
