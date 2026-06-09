@@ -3449,6 +3449,72 @@ bot.onText(/\/unlock/, async (msg) => {
   }
 
 });
+// ================= WARNLIST =================
+
+bot.onText(/\/warnlist/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can view the warning list."
+      );
+    }
+
+    const warnedUsers =
+      await db.collection("warnings")
+      .find({ chatId })
+      .toArray();
+
+    if (warnedUsers.length === 0) {
+      return bot.sendMessage(
+        chatId,
+        "✅ No warned users found."
+      );
+    }
+
+    let text =
+      "⚠️ WARNED USERS\n\n";
+
+    warnedUsers.forEach((user, index) => {
+
+      text +=
+        `${index + 1}. User ID: ${user.userId}\n` +
+        `Warnings: ${user.warnings}/3\n\n`;
+
+    });
+
+    bot.sendMessage(
+      chatId,
+      text
+    );
+
+  } catch (error) {
+
+    console.log(
+      "WARNLIST ERROR:",
+      error
+    );
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to fetch warning list."
+    );
+
+  }
+
+});
 
 
 
