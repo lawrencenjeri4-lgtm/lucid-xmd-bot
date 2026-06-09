@@ -3332,6 +3332,123 @@ bot.onText(/\/clearwarns/, async (msg) => {
   }
 
 });
+// ================= LOCK GROUP =================
+
+bot.onText(/\/lock/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  if (msg.chat.type === "private") {
+    return bot.sendMessage(
+      chatId,
+      "❌ This command only works in groups."
+    );
+  }
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can lock the group."
+      );
+    }
+
+    await bot.setChatPermissions(
+      chatId,
+      {
+        can_send_messages: false
+      }
+    );
+
+    bot.sendMessage(
+      chatId,
+      "🔒 Group locked.\n\nOnly admins can send messages."
+    );
+
+  } catch (error) {
+
+    console.log(
+      "LOCK ERROR:",
+      error
+    );
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to lock group."
+    );
+
+  }
+
+});
+// ================= UNLOCK GROUP =================
+
+bot.onText(/\/unlock/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  if (msg.chat.type === "private") {
+    return bot.sendMessage(
+      chatId,
+      "❌ This command only works in groups."
+    );
+  }
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can unlock the group."
+      );
+    }
+
+    await bot.setChatPermissions(
+      chatId,
+      {
+        can_send_messages: true,
+        can_send_polls: true,
+        can_send_other_messages: true,
+        can_add_web_page_previews: true
+      }
+    );
+
+    bot.sendMessage(
+      chatId,
+      "🔓 Group unlocked.\n\nMembers can send messages again."
+    );
+
+  } catch (error) {
+
+    console.log(
+      "UNLOCK ERROR:",
+      error
+    );
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to unlock group."
+    );
+
+  }
+
+});
 
 
 
