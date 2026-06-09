@@ -3515,6 +3515,69 @@ bot.onText(/\/warnlist/, async (msg) => {
   }
 
 });
+// ================= SET RULES =================
+
+bot.onText(/\/setrules (.+)/, async (msg, match) => {
+
+  const chatId = msg.chat.id;
+
+  if (msg.chat.type === "private") {
+    return bot.sendMessage(
+      chatId,
+      "❌ This command only works in groups."
+    );
+  }
+
+  try {
+
+    const admins =
+      await bot.getChatAdministrators(chatId);
+
+    const isAdmin =
+      admins.some(
+        admin => admin.user.id === msg.from.id
+      );
+
+    if (!isAdmin) {
+      return bot.sendMessage(
+        chatId,
+        "❌ Only admins can set group rules."
+      );
+    }
+
+    const rules = match[1];
+
+    await db.collection("groupRules").updateOne(
+      { chatId },
+      {
+        $set: {
+          rules,
+          updatedAt: new Date()
+        }
+      },
+      { upsert: true }
+    );
+
+    bot.sendMessage(
+      chatId,
+      "✅ Group rules have been updated."
+    );
+
+  } catch (error) {
+
+    console.log(
+      "SETRULES ERROR:",
+      error
+    );
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to save rules."
+    );
+
+  }
+
+});
 
 
 
