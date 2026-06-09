@@ -3104,6 +3104,7 @@ if (!settings?.antiLink) return;
     if (!settings?.antiLink) return;
 
     const text = msg.text.toLowerCase();
+    console.log("MESSAGE TEXT:", text);
 
     const hasLink =
       text.includes("http://") ||
@@ -3111,7 +3112,9 @@ if (!settings?.antiLink) return;
       text.includes("www.") ||
       text.includes("t.me/");
 
-    if (!hasLink) return;
+    console.log("HAS LINK:", hasLink);
+
+if (!hasLink) return;
 
     const admins =
       await bot.getChatAdministrators(chatId);
