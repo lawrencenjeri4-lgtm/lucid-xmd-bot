@@ -907,21 +907,46 @@ bot.onText(/\/runtime/, async (msg) => {
 🟢 Online for:
 ${hours}h ${minutes}m ${seconds}s`);
 });
-// =============== RULES ===============
+// ================= RULES =================
 
 bot.onText(/\/rules/, async (msg) => {
-    const chatId = msg.chat.id;
 
-    bot.sendMessage(chatId,
-`📜 GROUP RULES
+  const chatId = msg.chat.id;
 
-1. Respect everyone
-2. No spam
-3. No adult content
-4. No fake news
-5. Follow admin instructions
+  try {
 
-⚠️ Breaking rules may lead to removal.`);
+    const data =
+      await db.collection("groupRules")
+      .findOne({ chatId });
+
+    if (!data?.rules) {
+
+      return bot.sendMessage(
+        chatId,
+        "📜 No rules have been set yet.\n\nUse /setrules to create them."
+      );
+
+    }
+
+    bot.sendMessage(
+      chatId,
+      `📜 GROUP RULES\n\n${data.rules}`
+    );
+
+  } catch (error) {
+
+    console.log(
+      "RULES ERROR:",
+      error
+    );
+
+    bot.sendMessage(
+      chatId,
+      "❌ Failed to fetch rules."
+    );
+
+  }
+
 });
 // =============== ADMINS ===============
 
