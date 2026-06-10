@@ -155,73 +155,169 @@ Choose an option below 👇`,
 
 bot.on('callback_query', async (query) => {
 
-  const chatId = query.message.chat.id;
-  const data = query.data;
+const chatId = query.message.chat.id;
+const data = query.data;
 
-  if (data === 'ai') {
+if (data === 'ai') {
 
-    bot.sendMessage(chatId,
+bot.sendMessage(chatId,
+
 `🤖 AI COMMANDS
 
-/ai hello
-/ai explain coding
-/ai write a poem`);
+/ai text
+/ask question
+/imagine prompt
+/quiz topic
+/story theme
 
-  }
+🧠 Powered by Groq AI`);
 
-  else if (data === 'music') {
+}
 
-    bot.sendMessage(chatId,
-`🎵 MUSIC COMMANDS
+else if (data === 'music') {
 
-/ytmp3 believer`);
+bot.sendMessage(chatId,
 
-  }
+`🎵 MUSIC & MEDIA
 
-  else if (data === 'tiktok') {
+/ytmp3 song
+/lyrics Artist - Song
+/tiktok link
+/instagram link
 
-    bot.sendMessage(chatId,
+🎧 More media features coming soon`);
+
+}
+
+else if (data === 'tiktok') {
+
+bot.sendMessage(chatId,
+
 `🎬 TIKTOK DOWNLOADER
 
 Usage:
 /tiktok TikTokLink`);
 
-  }
+}
 
-  else if (data === 'instagram') {
+else if (data === 'instagram') {
 
-    bot.sendMessage(chatId,
-`📸 INSTAGRAM DOWNLOADER
+bot.sendMessage(chatId,
+
+`📸 INSTAGRAM
 
 Usage:
 /instagram InstagramLink`);
 
-  }
+}
 
-  else if (data === 'tools') {
+else if (data === 'tools') {
 
-    bot.sendMessage(chatId,
-`⚙️ TOOLS
+bot.sendMessage(chatId,
 
+`⚙️ TOOLS & GROUP MANAGEMENT
+
+🛠 Utilities
+/calc
+/weather
+/translate
+/time
+/encode
+/decode
+/password
+
+👥 Group
+/antilink on|off
+/warn
+/warnings
+/warnlist
+/clearwarns
+/kick
+/ban
+/mute
+/unmute
+/lock
+/unlock
+/admins
+/tagall
+/groupinfo
+/userinfo
+/id
+/rules
+/setrules
+
+🎲 Fun
+/joke
+/quote
+/fact
+/truth
+/dare
+/ship
+/meme
+/coin
+/choose`);
+
+}
+
+else if (data === 'help') {
+
+bot.sendMessage(chatId,
+
+`🆘 LUCID XMD HELP
+
+🤖 AI
+/ai
+/ask
+/imagine
+/story
+/quiz
+
+🎵 MEDIA
+/ytmp3
+/lyrics
+/tiktok
+/instagram
+
+🌍 TOOLS
+/weather
+/translate
+/time
+/calc
+/encode
+/decode
+
+👥 GROUP
+/antilink
+/warn
+/warnings
+/warnlist
+/kick
+/ban
+/mute
+/unmute
+/lock
+/unlock
+/rules
+/setrules
+
+🎮 FUN
+/joke
+/quote
+/fact
+/truth
+/dare
+/ship
+/meme
+
+📊 BOT
 /menu
-/help`);
+/help
+/owner`);
 
-  }
-
-  else if (data === 'help') {
-
-    bot.sendMessage(chatId,
-`❓ HELP MENU
-
-/menu - Open menu
-/ai - Chat with AI
-/ytmp3 - Search songs
-/tiktok - Download TikTok
-/instagram - Instagram info`);
-
-  }
+}
 
 });
+
 
 
 
@@ -230,15 +326,75 @@ Usage:
 bot.onText(/\/help/, (msg) => {
 
   bot.sendMessage(msg.chat.id,
-`🆘 Lucid XMD Help
+`🆘 LUCID XMD COMMANDS
 
-/menu - Open menu
-/ai - Chat with AI
-/ytmp3 - Search songs
-/tiktok - Download TikTok
-/instagram - Instagram info`);
+🤖 AI COMMANDS
+/ai text
+/ask question
+/imagine prompt
+/story theme
+/quiz topic
 
+🎵 MEDIA COMMANDS
+/ytmp3 song
+/lyrics Artist - Song
+/tiktok link
+/instagram link
+
+🌍 TOOLS
+/weather city
+/translate language text
+/time
+/calc expression
+/encode text
+/decode text
+/password
+/qr text
+/shorturl link
+
+👥 GROUP MANAGEMENT
+/antilink on|off
+/warn
+/warnings
+/warnlist
+/clearwarns
+/kick
+/ban
+/mute
+/unmute
+/lock
+/unlock
+/admins
+/tagall
+/groupinfo
+/userinfo
+/id
+/rules
+/setrules
+
+🎮 FUN COMMANDS
+/joke
+/quote
+/fact
+/truth
+/dare
+/ship name1 & name2
+/meme
+/coin
+/choose option1, option2
+
+📊 BOT COMMANDS
+/menu
+/help
+/owner
+/ping
+/stats
+/runtime
+/aistatus
+
+🚀 Lucid XMD - The Ultimate Telegram Bot`);
 });
+
 
 
 
