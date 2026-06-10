@@ -3759,6 +3759,183 @@ bot.onText(/\/setrules (.+)/, async (msg, match) => {
   }
 
 });
+// ================= XP SYSTEM =================
+
+bot.on('message', async (msg) => {
+
+  try {
+
+    if (!msg.text) return;
+
+    if (msg.chat.type === "private") return;
+
+    const userId = msg.from.id;
+    const chatId = msg.chat.id;
+
+    const xpGain = Math.floor(Math.random() * 5) + 1;
+
+    const userData =
+      await db.collection("xp").findOne({
+        userId,
+        chatId
+      });
+
+    let xp = xpGain;
+    let level = 1;
+
+    if (userData) {
+
+      xp = userData.xp + xpGain;
+      level = Math.floor(xp / 100) + 1;
+
+    }
+
+    await db.collection("xp").updateOne(
+      {
+        userId,
+        chatId
+      },
+      {
+        $set: {
+          name: msg.from.first_name,
+          xp,
+          level,
+          updatedAt: new Date()
+        }
+      },
+      {
+        upsert: true
+      }
+    );
+
+  } catch (err) {
+
+    console.log("XP ERROR:", err);
+
+  }
+
+});
+// ================= PROFILE =================
+
+bot.onText(/\/profile/, async (msg) => {
+
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+
+  const user =
+    await db.collection("xp").findOne({
+      userId,
+      chatId
+    });
+
+  if (!user) {
+
+    return bot.sendMessage(
+      chatId,
+      "❌ No profile found yet."
+    );
+
+  }
+
+  bot.sendMessage(
+    chatId,
+`👤 PROFILE
+
+📝 Name: ${user.name}
+
+⭐ Level: ${user.level}
+
+⚡ XP: ${user.xp}`
+  );
+
+});
+// ================= RANK =================
+
+bot.onText(/\/rank/, async (msg) => {
+
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+
+  const users =
+    await db.collection("xp")
+    .find({ chatId })
+    .sort({ xp: -1 })
+    .toArray();
+
+  const rank =
+    users.findIndex(
+      u => u.userId === userId
+    ) + 1;
+
+  const user =
+    users.find(
+      u => u.userId === userId
+    );
+
+  if (!user) {
+
+    return bot.sendMessage(
+      chatId,
+      "❌ No rank found."
+    );
+
+  }
+
+  bot.sendMessage(
+    chatId,
+`🏅 YOUR RANK
+
+👤 ${user.name}
+
+🏆 Rank: #${rank}
+
+⭐ Level: ${user.level}
+
+⚡ XP: ${user.xp}`
+  );
+
+});
+// ================= LEADERBOARD =================
+
+bot.onText(/\/leaderboard/, async (msg) => {
+
+  const chatId = msg.chat.id;
+
+  const users =
+    await db.collection("xp")
+    .find({ chatId })
+    .sort({ xp: -1 })
+    .limit(10)
+    .toArray();
+
+  if (!users.length) {
+
+    return bot.sendMessage(
+      chatId,
+      "❌ No users found."
+    );
+
+  }
+
+  let text =
+`🏆 TOP 10 LEADERBOARD
+
+`;
+
+  users.forEach((user, index) => {
+
+    text +=
+`${index + 1}. ${user.name}
+⭐ Level ${user.level}
+⚡ XP ${user.xp}
+
+`;
+
+  });
+
+  bot.sendMessage(chatId, text);
+
+});
 
 
 
